@@ -1,8 +1,10 @@
 from django import forms
-from .models import CoachingRequest
+from .models import CoachingRequest, PricingPlan
 from django.utils import timezone
 
 class CoachingRequestForm(forms.ModelForm):
+
+    plan = forms.ModelChoiceField(queryset=PricingPlan.objects.all(), widget=forms.HiddenInput(), required=False)
     class Meta:
         model = CoachingRequest
         fields = [
@@ -11,14 +13,15 @@ class CoachingRequestForm(forms.ModelForm):
             'name',
             'email',
             'phone',
-            'referral_source'
+            'referral_source',
+            'plan'
         ]
 
         widgets = {
             'scheduled_datetime': forms.DateTimeInput(
                 attrs={
                     'type': 'datetime-local',  # Use datetime-local input for combined date and time
-                    'class': 'bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500',
+                    'class': 'bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500',
                     'placeholder': 'Select date & time',
                     # Add min attribute for 24 hours from now
                     'min': (timezone.now() + timezone.timedelta(hours=24)).strftime('%Y-%m-%dT%H:%M')

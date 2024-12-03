@@ -2,7 +2,9 @@
 {% block content %}
 <section class="bg-white dark:bg-gray-900">
     <div class="mx-auto max-w-2xl px-4 py-8 lg:py-10">
-        <h2 class="mb-4 text-xl font-bold text-gray-900 dark:text-white">Make a Coaching Request</h2>
+        <h2 class="mb-6 text-xl font-bold text-gray-900 dark:text-white">Make a Coaching Request</h2>
+
+        <p class="mb-6 max-w-2xl text-center font-light text-gray-500 dark:text-gray-400 md:text-lg lg:mb-8 lg:text-xl">You selected the <strong>{{ plan.name }}</strong> plan.</p>
 
         {% if messages %}
             <ul class="messages">
@@ -50,11 +52,11 @@
                     {{ form.details }}
                 </div>
             </div>
-            <button type="submit" class="mt-4 inline-flex items-center rounded-lg bg-blue-700 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-blue-800 focus:ring-4 focus:ring-blue-200 dark:focus:ring-blue-900 sm:mt-6">
+            {{ form.plan }}
+            <button type="submit" class="mt-4 inline-flex items-center rounded-lg bg-primary-700 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-primary-800 focus:ring-4 focus:ring-primary-200 dark:focus:ring-primary-900 sm:mt-6">
                 Submit Request
             </button>
         </form>
     </div>
 </section>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowbite.min.js"></script>
 {% endblock content %}
