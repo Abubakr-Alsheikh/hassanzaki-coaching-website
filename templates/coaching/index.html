@@ -1,4 +1,4 @@
-{% extends "_base.html" %}
+{% extends "coaching/_base.html" %}
 {% block title %}Home{% endblock title %}
 {% load static %}
 {% block content %}
@@ -20,10 +20,10 @@
     </div>
 </section>
 <section class="rounded-3xl bg-gray-50 px-4 py-8 antialiased dark:bg-gray-900 md:py-16" id="about">
-    <div class="mx-auto mb-8 max-w-screen-md text-center lg:mb-5">
-        <h2 class="mb-4 text-4xl font-extrabold tracking-tight text-gray-900 dark:text-white">About</h2>
+    <div class="mx-auto mb-5 max-w-screen-md text-center">
+        <h2 class="text-4xl font-extrabold tracking-tight text-gray-900 dark:text-white">About</h2>
     </div>
-    <div class="mx-auto grid max-w-screen-xl bg-gray-50 p-4 dark:bg-gray-800 md:p-8 lg:grid-cols-12 lg:gap-8 lg:p-16 xl:gap-16">
+    <div class="mx-auto grid max-w-screen-xl bg-gray-50 p-4 dark:bg-gray-800 md:p-4 lg:grid-cols-12 lg:gap-8 lg:p-8 xl:gap-16">
       <div class="mb-5 lg:col-span-5">
           <img class="mb-4 h-full w-full rounded-2xl" src="{% static "images/hassan.jpg" %}" alt="peripherals" />
       </div>
@@ -31,7 +31,7 @@
         <h1 class="mb-3 text-2xl font-bold leading-tight tracking-tight text-gray-900 dark:text-white md:text-4xl">
             We invest in the world’s potential
         </h1>
-        <p class="mb-6 text-gray-500 dark:text-gray-400">{% lorem 1 b random %}</p>
+        <p class="mb-6 text-gray-500 dark:text-gray-400">Ex cumque tempore, ex atque dicta placeat officiis porro, quae quo cum consequuntur culpa ab eum quod hic voluptatum molestiae, at omnis similique accusantium eos delectus. Rem adipisci sapiente inventore, et error minus quisquam blanditiis cumque ut deserunt illo recusandae, alias harum omnis et amet, eaque laboriosam veniam saepe debitis pariatur dolor aliquam rerum quaerat deleniti neque, consequuntur commodi eveniet rem tenetur sed nostrum? Expedita sit porro harum sint dolor non iure, adipisci voluptates voluptatem possimus modi facilis quas veniam delectus, unde odio quisquam recusandae amet sed nesciunt facilis, nobis provident odio excepturi hic eveniet suscipit quasi veniam facere id sunt, porro maiores fugit ipsam eaque quam perspiciatis.</p>
       </div>
     </div>
   </section>
@@ -57,7 +57,7 @@
                             <span>You will have: <span class="font-semibold">{{ plan.sessions }} Session{{ plan.sessions|pluralize }}</span></span>
                         </li>
                     </ul>
-                    <a href="{% url 'coaching_request' plan.pk %}" class="rounded-lg bg-primary-600 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-primary-700 focus:ring-4 focus:ring-primary-200 dark:text-white dark:focus:ring-primary-900">Get started</a>
+                    <a href="{% url 'coaching:coaching_request' plan.pk %}" class="rounded-lg bg-primary-600 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-primary-700 focus:ring-4 focus:ring-primary-200 dark:text-white dark:focus:ring-primary-900">Get started</a>
                     {% if plan.featured %}
                         <span class="absolute right-2 top-2 rounded-md bg-yellow-400 px-2 py-1 text-sm font-bold text-white">Featured</span>
                     {% endif %}
@@ -66,7 +66,7 @@
         </div>
     </div>
 </section>
-<section class="rounded-3xl bg-gray-50">
+<section class="rounded-3xl bg-gray-50" id="contact">
     <div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 lg:py-10">
         <div class="mx-auto max-w-2xl text-center lg:max-w-4xl">
             <h2 class="text-3xl font-extrabold text-gray-900">Visit Our Location</h2>

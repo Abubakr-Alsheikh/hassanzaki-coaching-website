@@ -11,14 +11,14 @@ from .forms import CoachingRequestForm
 
 def index(request):
     plans = PricingPlan.objects.all()
-    return render(request, 'index.html', {'plans': plans})
+    return render(request, 'coaching/index.html', {'plans': plans})
 
 def coaching_request_view(request, plan_id):
     try:
         plan = get_object_or_404(PricingPlan, pk=plan_id)
     except PricingPlan.DoesNotExist:
         messages.error(request, "Invalid plan selected.")
-        return redirect('index') # Redirect to the index page or another appropriate page
+        return redirect('coaching:index') # Redirect to the index page or another appropriate page
 
     if request.method == 'POST':
         form = CoachingRequestForm(request.POST)
@@ -71,7 +71,7 @@ def coaching_request_view(request, plan_id):
 
 
                 messages.success(request, 'Your coaching request has been submitted successfully, wait until we contact you!')
-                return redirect('index')
+                return redirect('coaching:index')
 
     else:
         try:
@@ -80,4 +80,4 @@ def coaching_request_view(request, plan_id):
         except PricingPlan.DoesNotExist:
              form = CoachingRequestForm()
 
-    return render(request, 'coaching_request_form.html', {'form': form, 'plan': plan})
+    return render(request, 'coaching/coaching_request_form.html', {'form': form, 'plan': plan})
