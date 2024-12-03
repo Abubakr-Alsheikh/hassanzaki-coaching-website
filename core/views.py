@@ -70,8 +70,8 @@ def coaching_request_view(request, plan_id):
                 # send_mail(admin_subject, '', settings.DEFAULT_FROM_EMAIL, [admin_email], html_message=admin_html_message, fail_silently=False)
 
 
-                messages.success(request, 'Your coaching request has been submitted successfully!')
-                return redirect('coaching_request')  # Redirect to a thank you page
+                messages.success(request, 'Your coaching request has been submitted successfully, wait until we contact you!')
+                return redirect('index')
 
     else:
         try:
