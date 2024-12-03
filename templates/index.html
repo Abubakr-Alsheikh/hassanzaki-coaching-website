@@ -3,7 +3,7 @@
 {% load static %}
 {% block content %}
 <section class="bg-white dark:bg-gray-900">
-    <div class="mx-auto grid max-w-screen-xl items-center px-4 py-8 pt-2 md:justify-center lg:grid-cols-12 lg:gap-8 lg:py-16 lg:pt-8 xl:gap-0">
+    <div class="mx-auto grid max-w-screen-xl items-center px-4 py-8 pt-2 md:justify-center lg:grid-cols-12 lg:gap-8 lg:py-16 lg:pt-12 xl:gap-0">
         <div class="mr-auto place-self-center text-center lg:col-span-7 lg:text-left">
             <h1 class="mb-4 max-w-2xl text-4xl font-extrabold leading-none tracking-tight dark:text-white md:text-5xl xl:text-6xl">We invest in the world’s potential</h1>
             <p class="mb-6 max-w-2xl font-light text-gray-500 dark:text-gray-400 md:text-lg lg:mb-8 lg:text-xl">We focus on markets where technology, innovation, and capital can unlock long-term value and drive economic growth.</p>
@@ -19,11 +19,11 @@
         </div>
     </div>
 </section>
-<section class="bg-white px-4 py-8 antialiased dark:bg-gray-900 md:py-16" id="about">
-    <div class="mx-auto mb-8 max-w-screen-md text-center lg:mb-12">
+<section class="rounded-3xl bg-gray-50 px-4 py-8 antialiased dark:bg-gray-900 md:py-16" id="about">
+    <div class="mx-auto mb-8 max-w-screen-md text-center lg:mb-5">
         <h2 class="mb-4 text-4xl font-extrabold tracking-tight text-gray-900 dark:text-white">About</h2>
     </div>
-    <div class="mx-auto grid max-w-screen-xl rounded-3xl bg-gray-50 p-4 dark:bg-gray-800 md:p-8 lg:grid-cols-12 lg:gap-8 lg:p-16 xl:gap-16">
+    <div class="mx-auto grid max-w-screen-xl bg-gray-50 p-4 dark:bg-gray-800 md:p-8 lg:grid-cols-12 lg:gap-8 lg:p-16 xl:gap-16">
       <div class="lg:col-span-5 lg:mt-0">
           <img class="mb-4 h-56 w-56 rounded-2xl sm:h-96 sm:w-96 md:h-full md:w-full" src="{% static "images/hassan.jpg" %}" alt="peripherals" />
       </div>
@@ -63,6 +63,42 @@
                     {% endif %}
                 </div>
             {% endfor %}
+        </div>
+    </div>
+</section>
+<section class="rounded-3xl bg-gray-50">
+    <div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 lg:py-10">
+        <div class="mx-auto max-w-2xl text-center lg:max-w-4xl">
+            <h2 class="text-3xl font-extrabold text-gray-900">Visit Our Location</h2>
+            <p class="mt-4 text-lg text-gray-500">Lorem ipsum dolor sit amet consectetur adipisicing elit.</p>
+        </div>
+        <div class="mt-16 lg:mt-20">
+            <div class="grid grid-cols-1 gap-8 md:grid-cols-2">
+                <div class="overflow-hidden rounded-lg">
+                    <iframe
+                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d11672.945750644447!2d-122.42107853750231!3d37.7730507907087!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x80858070cc2fbd55%3A0xa71491d736f62d5c!2sGolden%20Gate%20Bridge!5e0!3m2!1sen!2sus!4v1619524992238!5m2!1sen!2sus"
+                        width="100%" height="480" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+                </div>
+                <div>
+                    <div class="mx-auto max-w-full overflow-hidden rounded-lg">
+                        <div class="px-6 py-4">
+                            <h3 class="text-lg font-medium text-gray-900">Our Address</h3>
+                            <p class="mt-1 text-gray-600">123 Main St, San Francisco, CA 94105</p>
+                        </div>
+                        <div class="border-t border-gray-200 px-6 py-4">
+                            <h3 class="text-lg font-medium text-gray-900">Hours</h3>
+                            <p class="mt-1 text-gray-600">Monday - Friday: 9am - 5pm</p>
+                            <p class="mt-1 text-gray-600">Saturday: 10am - 4pm</p>
+                            <p class="mt-1 text-gray-600">Sunday: Closed</p>
+                        </div>
+                        <div class="border-t border-gray-200 px-6 py-4">
+                            <h3 class="text-lg font-medium text-gray-900">Contact</h3>
+                            <p class="mt-1 text-gray-600">Email: info@example.com</p>
+                            <p class="mt-1 text-gray-600">Phone: +1 23494 34993</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </section>
