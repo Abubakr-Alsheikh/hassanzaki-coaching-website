@@ -5,7 +5,7 @@ from django.contrib import messages
 from django.template.loader import render_to_string
 from django.utils import timezone
 
-from core.models import PricingPlan
+from .models import PricingPlan
 from .forms import CoachingRequestForm
 
 
