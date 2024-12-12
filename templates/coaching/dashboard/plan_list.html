@@ -1,0 +1,47 @@
+{% extends "coaching/dashboard/_dashboard.html" %}
+
+{% block extra_content %}
+    <div class="mb-4">
+        <a href="{% url 'coaching:plan_create' %}"
+           class="rounded-lg bg-blue-700 px-3 py-2 text-center text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+          إنشاء خطة جديدة
+        </a>
+    </div>
+
+    <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+        <table class="w-full text-left text-sm text-gray-500 dark:text-gray-400 rtl:text-right">
+            <thead class="bg-gray-50 text-xs uppercase text-gray-700 dark:bg-gray-700 dark:text-gray-400">
+                <tr>
+                    <th scope="col" class="px-6 py-3">اسم الخطة</th>
+                    <th scope="col" class="px-6 py-3">الوصف</th>
+                    <th scope="col" class="px-6 py-3">السعر</th>
+                    <th scope="col" class="px-6 py-3">الجلسات</th>
+                    <th scope="col" class="px-6 py-3">مميزة</th>
+                    <th scope="col" class="px-6 py-3">الإجراءات</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for plan in plans %}
+                    <tr class="border-b odd:bg-white even:bg-gray-50 dark:border-gray-700 odd:dark:bg-gray-900 even:dark:bg-gray-800">
+                        <td class="whitespace-nowrap px-6 py-4 font-medium text-gray-900 dark:text-white">{{ plan.name }}</td>
+                        <td class="px-6 py-4">{{ plan.description|truncatechars:50 }}</td>
+                        <td class="px-6 py-4">{{ plan.price }}</td>
+                        <td class="px-6 py-4">{{ plan.sessions }}</td>
+                        <td class="px-6 py-4">
+                            {% if plan.featured %}
+                                <span class="font-medium text-green-500">نعم</span>
+                            {% else %}
+                                <span class="font-medium text-red-500">لا</span>
+                            {% endif %}
+                        </td>
+                        <td class="px-6 py-4">
+                            <a href="{% url 'coaching:plan_edit' plan.id %}" class="me-2 block w-full rounded-lg bg-yellow-400 px-3 py-1 text-center text-sm font-medium text-white hover:bg-yellow-500 focus:outline-none focus:ring-4 focus:ring-yellow-300 dark:focus:ring-yellow-900">تعديل</a>
+                            <a href="{% url 'coaching:plan_delete' plan.id %}" class="mt-1 block w-full rounded-lg bg-red-700 px-3 py-1 text-center text-sm font-medium text-white hover:bg-red-800 focus:outline-none focus:ring-4 focus:ring-red-300 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900">حذف</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+{% endblock %}

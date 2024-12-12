@@ -9,10 +9,13 @@ urlpatterns = [
     path('coaching-request/<int:plan_id>/', views.coaching_request_view, name='coaching_request'),
     # dashbaord
     path('dashboard/', views.dashboard, name='dashboard'),
+
     path('dashboard/requests/', views.request_list, name='request_list'),
-    path('requests/hide/<int:request_id>/', views.hide_request, name='hide_request'),
-    path('requests/delete/<int:request_id>/', views.delete_request, name='delete_request'),
-    # path('dashboard/products/create/', views.product_create, name='product_create'),
-    # path('dashboard/products/<int:product_id>/edit/', views.product_edit, name='product_edit'),
-    # path('dashboard/products/<int:product_id>/delete/', views.product_delete, name='product_delete'),
+    path('dashboard/requests/hide/<int:request_id>/', views.hide_request, name='hide_request'),
+    path('dashboard/requests/delete/<int:request_id>/', views.delete_request, name='delete_request'),
+
+    path('dashboard/plans/', views.plan_list, name='plan_list'),
+    path('dashboard/plans/create/', views.plan_create, name='plan_create'),
+    path('dashboard/plans/edit/<int:plan_id>/', views.plan_edit, name='plan_edit'),
+    path('dashboard/plans/delete/<int:plan_id>/', views.plan_delete, name='plan_delete'),
 ]

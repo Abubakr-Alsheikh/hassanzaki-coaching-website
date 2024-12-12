@@ -1,4 +1,5 @@
 import datetime
+from django.forms import ValidationError
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, render, redirect
 from django.core.mail import send_mail
@@ -122,3 +123,62 @@ def delete_request(request, request_id):
         coaching_request.delete()
         return redirect('coaching:request_list')
     return render(request, 'coaching/dashboard/request_delete.html', {'coaching_request': coaching_request})
+
+
+@login_required
+def plan_list(request):
+    """Displays a list of all pricing plans."""
+    plans = PricingPlan.objects.all().order_by('price')
+    context = {'plans': plans}
+    return render(request, 'coaching/dashboard/plan_list.html', context)
+
+
+@login_required
+def plan_create(request):
+   if request.method == 'POST':
+      name = request.POST.get('name')
+      description = request.POST.get('description')
+      price = request.POST.get('price')
+      sessions = request.POST.get('sessions')
+      featured = request.POST.get('featured') == 'on'
+
+      try:
+         PricingPlan.objects.create(name=name, description=description, price=price, sessions=sessions, featured=featured )
+         return redirect('coaching:plan_list')
+      except ValidationError as e:
+          context = {'errors': e}
+          return render(request, 'coaching/dashboard/plan_create.html', context)
+   return render(request, 'coaching/dashboard/plan_create.html')
+
+@login_required
+def plan_edit(request, plan_id):
+    """
+    Displays a form to edit an existing pricing plan and handles the update.
+    """
+    plan = get_object_or_404(PricingPlan, id=plan_id)
+    if request.method == 'POST':
+        plan.name = request.POST.get('name')
+        plan.description = request.POST.get('description')
+        plan.price = request.POST.get('price')
+        plan.sessions = request.POST.get('sessions')
+        plan.featured = request.POST.get('featured') == 'on'
+        try:
+            plan.save()
+            return redirect('coaching:plan_list')
+        except ValidationError as e:
+            context = {'plan': plan, 'errors': e}
+            return render(request, 'coaching/dashboard/plan_edit.html', context)
+
+    context = {'plan': plan}
+    return render(request, 'coaching/dashboard/plan_edit.html', context)
+
+@login_required
+def plan_delete(request, plan_id):
+    """
+    Deletes a pricing plan using its ID after confirmation.
+    """
+    plan = get_object_or_404(PricingPlan, id=plan_id)
+    if request.method == 'POST':
+        plan.delete()
+        return redirect('coaching:plan_list')
+    return render(request, 'coaching/dashboard/plan_delete_confirmation.html', {'plan': plan})
