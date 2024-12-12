@@ -2,7 +2,7 @@ from django import forms
 from .models import CoachingRequest, PricingPlan
 from django.utils import timezone
 from django.core.exceptions import ValidationError
-
+import pytz
 
 class CoachingRequestForm(forms.ModelForm):
     plan = forms.ModelChoiceField(
@@ -17,6 +17,15 @@ class CoachingRequestForm(forms.ModelForm):
         }),
         label='Available Time'
     )
+    timezone = forms.ChoiceField(
+        choices=[(tz, tz) for tz in pytz.common_timezones],
+        initial='Africa/Cairo',  # Default timezone is Egypt
+        widget=forms.Select(attrs={
+            'class': 'bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500',
+            'onchange': 'submit();' # Trigger submit when timezone change
+        }),
+        label='Your Time Zone'
+    )
 
     class Meta:
         model = CoachingRequest
@@ -28,8 +37,8 @@ class CoachingRequestForm(forms.ModelForm):
             'phone',
             'referral_source',
             'plan',
-            'available_times' # Add the new field
-
+            'available_times',
+             'timezone'
         ]
 
         widgets = {
@@ -39,8 +48,7 @@ class CoachingRequestForm(forms.ModelForm):
                     'class': 'bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500',
                     'placeholder': 'Select date',
                     'min': (timezone.now()).strftime('%Y-%m-%d'),
-                    'onchange': 'submit();'
-
+                    'onchange': 'submit();' # Trigger submit when date change
                 }
             ),
             'details': forms.Textarea(
@@ -77,29 +85,17 @@ class CoachingRequestForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['available_times'].choices = self.get_available_time_choices()  # Populate initial choices.
-
-    def clean(self):
-        cleaned_data = super().clean()
-        selected_date = cleaned_data.get('scheduled_datetime')
-        selected_time = cleaned_data.get('available_times')
-
-        if selected_date and selected_time:
-              try:
-                  combined_datetime_str = f"{selected_date.strftime('%Y-%m-%d')} {selected_time}"
-                  combined_datetime = timezone.datetime.strptime(combined_datetime_str, '%Y-%m-%d %H:%M')
-                  cleaned_data['scheduled_datetime'] = combined_datetime
-                  if combined_datetime < timezone.now():
-                      raise ValidationError("Please select a date and time in the future.")
-              except (ValueError, TypeError):
-                  raise ValidationError("Invalid date and time format.")
-
-
-        return cleaned_data
+        # Populate initial time choices using the current date and selected timezone
+        if 'scheduled_datetime' not in self.data:
+          initial_date = timezone.now().date()
+          self.data['scheduled_datetime'] = initial_date.strftime('%Y-%m-%d')
+        self.fields['available_times'].choices = self.get_available_time_choices()
 
 
     def get_available_time_choices(self):
         selected_date = self.data.get('scheduled_datetime')
+        selected_timezone = self.data.get('timezone')
+
         if not selected_date:
             return []
 
@@ -116,6 +112,16 @@ class CoachingRequestForm(forms.ModelForm):
         else:
             start_hour = 12
 
+
+        egypt_tz = pytz.timezone('Africa/Cairo')
+        if selected_timezone:
+            try:
+              user_tz = pytz.timezone(selected_timezone)
+            except pytz.exceptions.UnknownTimeZoneError:
+                user_tz = egypt_tz
+        else:
+              user_tz = egypt_tz
+
         start_time = timezone.datetime.combine(selected_date, timezone.datetime.min.time()).replace(hour=start_hour, minute=0)
         end_time = timezone.datetime.combine(selected_date, timezone.datetime.min.time()).replace(hour=18, minute=0)
         interval = timezone.timedelta(hours=1)
@@ -123,16 +129,19 @@ class CoachingRequestForm(forms.ModelForm):
         time_slots = []
         current_time = start_time
         while current_time < end_time:
-            time_str = current_time.strftime('%I:%M %p')  # Format as AM/PM
-            time_slots.append((current_time.strftime('%H:%M'), time_str)) # Save the hour in 24 format for backend, but show in AM/PM
-            current_time += interval
+          egypt_time = egypt_tz.localize(current_time)
+          user_time = egypt_time.astimezone(user_tz)
+          time_str = user_time.strftime('%I:%M %p')
+          time_slots.append((current_time.strftime('%H:%M'), time_str))
+          current_time += interval
+
 
 
         # Filter out unavailable times (from existing requests).
         unavailable_times = CoachingRequest.objects.filter(
             scheduled_datetime__date=selected_date
         ).values_list('scheduled_datetime__time', flat=True)
-        
+
         unavailable_times_str = [time.strftime('%H:%M') for time in unavailable_times]
         available_time_slots = [slot for slot in time_slots if slot[0] not in unavailable_times_str]
 

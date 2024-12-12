@@ -1,6 +1,7 @@
 from django.db import models
 from django.core.validators import validate_email, RegexValidator, MinValueValidator
 from django.utils import timezone
+import pytz
 
 
 class PricingPlan(models.Model):
@@ -36,6 +37,7 @@ class CoachingRequest(models.Model):
 
     referral_source = models.CharField("Referral Source", max_length=10, choices=REFERRAL_SOURCES)
     plan = models.ForeignKey(PricingPlan, on_delete=models.SET_NULL, null=True, blank=True, related_name="coaching_requests")
+    timezone = models.CharField("Time Zone", max_length=255, default='Africa/Cairo', choices=[(tz, tz) for tz in pytz.common_timezones])
 
 
     created_at = models.DateTimeField(auto_now_add=True) # Automatically record creation time

@@ -27,11 +27,14 @@
         <form method="post">
             {% csrf_token %}
             <div class="grid gap-4 sm:grid-cols-2 sm:gap-6">
+                  <div class="sm:col-span-2">
+                    <label for="id_timezone" class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">Your Timezone</label>
+                    {{ form.timezone }}
+                  </div>
                 <div class="sm:col-span-2">
                     <label for="id_scheduled_datetime" class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">Date</label>
                     {{ form.scheduled_datetime }}
                 </div>
-
                 <div class="sm:col-span-2">
                     <label for="id_available_times" class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">Available Times</label>
                     {{ form.available_times }}

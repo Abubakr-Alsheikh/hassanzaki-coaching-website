@@ -20,96 +20,57 @@ def coaching_request_view(request, plan_id):
         plan = get_object_or_404(PricingPlan, pk=plan_id)
     except PricingPlan.DoesNotExist:
         messages.error(request, "Invalid plan selected.")
-        return redirect('coaching:index') # Redirect to the index page or another appropriate page
+        return redirect('coaching:index')
 
     if request.method == 'POST':
         form = CoachingRequestForm(request.POST)
         if form.is_valid():
 
-            scheduled_datetime = form.cleaned_data['scheduled_datetime']
-
-            # Extract date and time components
-            scheduled_date = scheduled_datetime.date()
-            scheduled_time = scheduled_datetime.time()
-            # scheduled_datetime = timezone.datetime.combine(scheduled_date, scheduled_time) #combine date and time into datetime object
-
-            if scheduled_datetime <= timezone.now():
-                messages.error(request, 'Please select a date and time in the future.')
-            else:
-
-                coaching_request = form.save(commit=False) # Don't save yet
-                coaching_request.plan = plan
-
-                coaching_request.save() # Now save
-                # Send email to the user
-                # user_email = form.cleaned_data['email']
-                # user_name = form.cleaned_data['name']
-                # context = {
-                #        'name': user_name,
-                #        'scheduled_date':scheduled_date.strftime("%Y-%m-%d"),
-                #        'scheduled_time': scheduled_time.strftime("%H:%M"), #format time for email
-                #     }
-                # subject = 'Your Coaching Request Confirmation'
-                # html_message = render_to_string('emails/coaching_request_confirmation.html', context)
-                # send_mail(subject, '', settings.DEFAULT_FROM_EMAIL,[user_email], html_message=html_message, fail_silently=False)
+            selected_date = form.cleaned_data['scheduled_datetime']
+            selected_time = form.cleaned_data['available_times']
+            # Combine selected date and time
+            combined_datetime_str = f"{selected_date.strftime('%Y-%m-%d')} {selected_time}"
+            combined_datetime = timezone.datetime.strptime(combined_datetime_str, '%Y-%m-%d %H:%M')
+            coaching_request = form.save(commit=False)
+            coaching_request.scheduled_datetime = combined_datetime
+            coaching_request.plan = plan
+            coaching_request.save()
+            # Send email to the user
+            # user_email = form.cleaned_data['email']
+            # user_name = form.cleaned_data['name']
+            # context = {
+            #     'name': user_name,
+            #     'scheduled_date':coaching_request.scheduled_datetime.strftime("%Y-%m-%d"),
+            #     'scheduled_time': coaching_request.scheduled_datetime.strftime("%H:%M"),
+            # }
+            # subject = 'Your Coaching Request Confirmation'
+            # html_message = render_to_string('emails/coaching_request_confirmation.html', context)
+            # send_mail(subject, '', settings.DEFAULT_FROM_EMAIL,[user_email], html_message=html_message, fail_silently=False)
 
 
-                # # Send email to the coach/admin
-                # admin_email = settings.ADMIN_EMAIL  # Replace with your admin email
-                # admin_context = {
-                #        'name': user_name,
-                #         'phone': form.cleaned_data['phone'],  
-                #         'email':user_email,
-                #         'scheduled_date': scheduled_date.strftime("%Y-%m-%d"),
-                #         'scheduled_time': scheduled_time.strftime("%H:%M"),
-                #         'coaching_niche': form.cleaned_data['coaching_niche'],
-                #         'details':form.cleaned_data['details'],
+            # # Send email to the coach/admin
+            # admin_email = settings.ADMIN_EMAIL  # Replace with your admin email
+            # admin_context = {
+            #     'name': user_name,
+            #     'phone': form.cleaned_data['phone'],
+            #     'email':user_email,
+            #     'scheduled_date': coaching_request.scheduled_datetime.strftime("%Y-%m-%d"),
+            #     'scheduled_time': coaching_request.scheduled_datetime.strftime("%H:%M"),
+            #     'coaching_niche': form.cleaned_data['coaching_niche'],
+            #     'details':form.cleaned_data['details'],
 
-                #        # Add other necessary context variables
-                # }
-                # admin_subject = f'New Coaching Request from {user_name}'
-                # admin_html_message = render_to_string('emails/new_coaching_request_notification.html', admin_context)
-                # send_mail(admin_subject, '', settings.DEFAULT_FROM_EMAIL, [admin_email], html_message=admin_html_message, fail_silently=False)
+            # }
+            # admin_subject = f'New Coaching Request from {user_name}'
+            # admin_html_message = render_to_string('emails/new_coaching_request_notification.html', admin_context)
+            # send_mail(admin_subject, '', settings.DEFAULT_FROM_EMAIL, [admin_email], html_message=admin_html_message, fail_silently=False)
 
-
-                messages.success(request, 'Your coaching request has been submitted successfully, wait until we contact you!')
-                return redirect('coaching:index')
-
+            messages.success(request, 'Your coaching request has been submitted successfully, wait until we contact you!')
+            return redirect('coaching:index')
     else:
         try:
-            selected_plan = PricingPlan.objects.get(pk=plan_id) # Get plan for initial form
-            form = CoachingRequestForm(initial={'plan': selected_plan})  # Pre-select the plan
+            selected_plan = PricingPlan.objects.get(pk=plan_id)
+            form = CoachingRequestForm(initial={'plan': selected_plan})
         except PricingPlan.DoesNotExist:
              form = CoachingRequestForm()
 
     return render(request, 'coaching/coaching_request_form.html', {'form': form, 'plan': plan})
-
-
-def available_times(request, date):
-    try:
-        selected_date = datetime.datetime.strptime(date, '%Y-%m-%d').date()
-    except ValueError:
-        return JsonResponse({'error': 'Invalid date format'}, status=400)
-
-    if selected_date.weekday() == 4: # Friday (index 4)
-        return JsonResponse({'available_times': []})
-
-
-    # Get existing appointments for the selected date
-    existing_appointments = CoachingRequest.objects.filter(
-        scheduled_datetime__date=selected_date
-    ).values_list('scheduled_datetime__time', flat=True)
-
-    # Define available time slots (customize as needed)
-    all_times = [
-      datetime.time(9, 0), datetime.time(10, 0), datetime.time(11, 0),
-      datetime.time(13, 0), datetime.time(14, 0), datetime.time(15, 0),
-      datetime.time(16, 0)
-    ]
-
-
-
-    available_times = [time.strftime('%H:%M') for time in all_times if time not in existing_appointments]
-
-
-    return JsonResponse({'available_times': available_times})
