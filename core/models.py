@@ -42,6 +42,7 @@ class CoachingRequest(models.Model):
 
     created_at = models.DateTimeField(auto_now_add=True) # Automatically record creation time
     updated_at = models.DateTimeField(auto_now=True)  #Automatically update on each save
+    is_hidden = models.BooleanField(default=False)
 
 
     def __str__(self):

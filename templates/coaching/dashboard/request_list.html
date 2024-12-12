@@ -1,7 +1,13 @@
-{% extends "coaching/dashboard/_dashboard.html" %} 
+{% extends "coaching/dashboard/_dashboard.html" %}
 
 {% block extra_content %}
 
+<div class="mb-4">
+    <a href="{% url 'coaching:request_list' %}?show_all={% if show_all %}false{% else %}true{% endif %}"
+       class="rounded-lg bg-blue-700 px-3 py-1 text-center text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+      {% if show_all %} إظهار الطلبات المستقبلية فقط {% else %} إظهار جميع الطلبات {% endif %}
+    </a>
+</div>
 <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
     <table class="w-full text-left text-sm text-gray-500 dark:text-gray-400 rtl:text-right">
         <thead class="bg-gray-50 text-xs uppercase text-gray-700 dark:bg-gray-700 dark:text-gray-400">
@@ -10,35 +16,98 @@
                 <th scope="col" class="px-6 py-3">البريد الإلكتروني</th>
                 <th scope="col" class="px-6 py-3">الهاتف</th>
                 <th scope="col" class="px-6 py-3">التاريخ والوقت المجدول</th>
+                <th scope="col" class="px-6 py-3">المنطقة الزمنية</th>
                 <th scope="col" class="px-6 py-3">مصدر الإحالة</th>
                 <th scope="col" class="px-6 py-3">الخطة</th>
-                <th scope="col" class="px-6 py-3">المنطقة الزمنية</th>
-                <th scope="col" class="px-6 py-3">تاريخ الإنشاء</th>
-                <th scope="col" class="px-6 py-3">إجراءات</th>
+                 <th scope="col" class="px-6 py-3">تاريخ الإنشاء</th>
+                <th scope="col" class="px-6 py-3">الإجراءات</th>
             </tr>
         </thead>
         <tbody>
             {% for request in coaching_requests %}
-            <tr class="border-b odd:bg-white even:bg-gray-50 dark:border-gray-700 odd:dark:bg-gray-900 even:dark:bg-gray-800">
-                <td class="whitespace-nowrap px-6 py-4 font-medium text-gray-900 dark:text-white">{{ request.name }}</td>
-                <td class="px-6 py-4">{{ request.email }}</td>
-                <td class="px-6 py-4">{{ request.phone }}</td>
-                <td class="px-6 py-4">{{ request.scheduled_datetime|date:"Y-m-d H:i" }}</td>
-                <td class="px-6 py-4">
-                    {% for source_value, source_display in request.REFERRAL_SOURCES %}
-                        {% if source_value == request.referral_source %}
-                            {{ source_display }}
+                <tr class="border-b odd:bg-white even:bg-gray-50 dark:border-gray-700 odd:dark:bg-gray-900 even:dark:bg-gray-800 {% if request.is_hidden %}opacity-50 line-through{% endif %}">
+                    <td class="whitespace-nowrap px-6 py-4 font-medium text-gray-900 dark:text-white">{{ request.name }}</td>
+                    <td class="px-6 py-4">{{ request.email }}</td>
+                    <td class="px-6 py-4">{{ request.phone }}</td>
+                    <td class="px-6 py-4">{{ request.scheduled_datetime|date:"Y-m-d H:i" }}</td>
+                    <td class="px-6 py-4">{{ request.timezone }}</td>
+                    <td class="px-6 py-4">
+                        {% for source_value, source_display in request.REFERRAL_SOURCES %}
+                            {% if source_value == request.referral_source %}
+                                {{ source_display }}
+                            {% endif %}
+                        {% endfor %}
+                    </td>
+                    <td class="px-6 py-4">{{ request.plan.name }}</td>
+                      <td class="px-6 py-4">{{ request.created_at|date:"Y-m-d H:i" }}</td>
+                    <td class="px-6 py-4">
+                        <button data-modal-target="request-modal-{{request.id}}" data-modal-toggle="request-modal-{{request.id}}" class="me-2 w-full rounded-lg bg-blue-700 px-3 py-1 text-center text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">عرض التفاصيل</button>
+
+                        {% if not request.is_hidden %}
+                            <a href="{% url 'coaching:hide_request' request.id %}" class="me-2 mt-1 block w-full rounded-lg bg-yellow-500 px-3 py-1 text-center text-sm font-medium text-white hover:bg-yellow-800 focus:outline-none focus:ring-4 focus:ring-yellow-300 dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:focus:ring-yellow-900">إخفاء</a>
                         {% endif %}
-                    {% endfor %}
-                </td>
-                <td class="px-6 py-4">{{ request.plan.name }}</td>
-                <td class="px-6 py-4">{{ request.timezone }}</td>
-                <td class="px-6 py-4">{{ request.created_at|date:"Y-m-d" }}</td>
-                <td class="flex px-6 py-4">
-                    <a href="#" class="me-2 rounded-lg bg-yellow-400 px-3 py-1 text-center text-sm font-medium text-white hover:bg-yellow-500 focus:outline-none focus:ring-4 focus:ring-yellow-300 dark:focus:ring-yellow-900">عرض</a>
-                    <a href="#" class="me-2 rounded-lg bg-red-700 px-3 py-1 text-center text-sm font-medium text-white hover:bg-red-800 focus:outline-none focus:ring-4 focus:ring-red-300 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900">حذف</a>
-                </td>
-            </tr>
+                        {% if show_all %}
+                            <a href="{% url 'coaching:delete_request' request.id %}" class="mt-1 block w-full rounded-lg bg-red-700 px-3 py-1 text-center text-sm font-medium text-white hover:bg-red-800 focus:outline-none focus:ring-4 focus:ring-red-300 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900">حذف</a>
+                        {% endif %}
+
+                        <!-- Modal -->
+                        <div id="request-modal-{{request.id}}" tabindex="-1" aria-hidden="true" class="fixed left-0 right-0 top-0 z-50 hidden h-[calc(100%-1rem)] max-h-full w-full items-center justify-center overflow-y-auto overflow-x-hidden md:inset-0">
+                            <div class="relative max-h-full w-full max-w-2xl p-4">
+                                <!-- Modal content -->
+                                <div class="relative rounded-lg bg-white shadow dark:bg-gray-700">
+                                    <!-- Modal header -->
+                                    <div class="flex items-center justify-between rounded-t border-b p-4 dark:border-gray-600 md:p-5">
+                                        <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
+                                            تفاصيل طلب التدريب
+                                        </h3>
+                                        <button type="button" class="ms-auto inline-flex h-8 w-8 items-center justify-center rounded-lg bg-transparent text-sm text-gray-400 hover:bg-gray-200 hover:text-gray-900 dark:hover:bg-gray-600 dark:hover:text-white" data-modal-hide="request-modal-{{request.id}}">
+                                            <svg class="h-3 w-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
+                                            </svg>
+                                            <span class="sr-only">إغلاق النافذة</span>
+                                        </button>
+                                    </div>
+                                    <!-- Modal body -->
+                                    <div class="space-y-4 p-4 md:p-5">
+                                       <p class="text-base leading-relaxed text-gray-500 dark:text-gray-400">
+                                            <strong>الاسم:</strong> {{ request.name }}
+                                       </p>
+                                       <p class="text-base leading-relaxed text-gray-500 dark:text-gray-400">
+                                            <strong>البريد الإلكتروني:</strong> {{ request.email }}
+                                       </p>
+                                        <p class="text-base leading-relaxed text-gray-500 dark:text-gray-400">
+                                           <strong>الهاتف:</strong> {{ request.phone }}
+                                       </p>
+                                       <p class="text-base leading-relaxed text-gray-500 dark:text-gray-400">
+                                          <strong>التاريخ والوقت المجدول:</strong> {{ request.scheduled_datetime|date:"Y-m-d H:i" }}
+                                       </p>
+                                      <p class="text-base leading-relaxed text-gray-500 dark:text-gray-400">
+                                         <strong>المنطقة الزمنية:</strong> {{ request.timezone }}
+                                       </p>
+                                       <p class="text-base leading-relaxed text-gray-500 dark:text-gray-400">
+                                            <strong>مصدر الإحالة:</strong>
+                                            {% for source_value, source_display in request.REFERRAL_SOURCES %}
+                                                {% if source_value == request.referral_source %}
+                                                    {{ source_display }}
+                                                {% endif %}
+                                            {% endfor %}
+                                        </p>
+                                        <p class="text-base leading-relaxed text-gray-500 dark:text-gray-400">
+                                            <strong>الخطة:</strong> {{ request.plan.name }}
+                                        </p>
+                                        <p class="text-base leading-relaxed text-gray-500 dark:text-gray-400">
+                                            <strong>التفاصيل:</strong> {{ request.details }}
+                                        </p>
+                                    </div>
+                                    <!-- Modal footer -->
+                                    <div class="flex items-center rounded-b border-t border-gray-200 p-4 dark:border-gray-600 md:p-5">
+                                        <button data-modal-hide="request-modal-{{request.id}}" type="button" class="rounded-lg bg-blue-700 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">إغلاق</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
             {% endfor %}
         </tbody>
     </table>

@@ -81,8 +81,44 @@ def dashboard(request):
     context = {'user': request.user}
     return render(request, 'coaching/dashboard/_dashboard.html', context)
 
+
 @login_required
 def request_list(request):
-    coaching_requests = CoachingRequest.objects.order_by('-created_at')
-    context = {'coaching_requests': coaching_requests}
+    """
+    Displays a list of coaching requests.
+    Allows toggling between future requests only and all requests, including hiding functionality.
+    """
+    show_all = request.GET.get('show_all', False) == 'true'
+    now = timezone.now()
+
+    if show_all:
+        coaching_requests = CoachingRequest.objects.all().order_by('scheduled_datetime')
+    else:
+        coaching_requests = CoachingRequest.objects.filter(scheduled_datetime__gte=now, is_hidden=False).order_by('scheduled_datetime')
+
+    context = {
+        'coaching_requests': coaching_requests,
+        'show_all': show_all,
+    }
     return render(request, 'coaching/dashboard/request_list.html', context)
+
+@login_required
+def hide_request(request, request_id):
+    """
+    Hides a coaching request using its ID.
+    """
+    coaching_request = get_object_or_404(CoachingRequest, id=request_id)
+    coaching_request.is_hidden = True
+    coaching_request.save()
+    return redirect('coaching:request_list')
+
+@login_required
+def delete_request(request, request_id):
+    """
+    Deletes a coaching request using its ID after confirmation.
+    """
+    coaching_request = get_object_or_404(CoachingRequest, id=request_id)
+    if request.method == 'POST':
+        coaching_request.delete()
+        return redirect('coaching:request_list')
+    return render(request, 'coaching/dashboard/request_delete.html', {'coaching_request': coaching_request})
