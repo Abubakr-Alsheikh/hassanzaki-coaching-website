@@ -1,0 +1,76 @@
+{% extends "dashboard/_dashboard.html" %} 
+{% load static i18n %}
+
+{% block extra_content %}
+<div class="relative rounded-lg bg-white p-4 shadow dark:bg-gray-800 sm:p-5">
+    <!-- Modal header -->
+    <div class="mb-4 flex items-center justify-between rounded-t border-b pb-4 dark:border-gray-600 sm:mb-5">
+        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
+            {% if product %}
+                {% trans "تعديل منتج" %}
+            {% else %}
+                {% trans "إضافة منتج جديد" %}
+            {% endif %}
+        </h3>
+    </div>
+    <!-- Modal body -->
+    <form action="{% if product %}{% url 'home:product_edit' product.id %}{% else %}{% url 'home:product_create' %}{% endif %}" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="mb-4 grid gap-4 sm:grid-cols-2">
+            <div class="sm:col-span-2">
+                <label for="name" class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">{% trans "اسم المنتج" %}</label>
+                <input type="text" value="{{product.name|default_if_none:''}}" name="name" id="name" class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-600 focus:ring-primary-600 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-primary-500 dark:focus:ring-primary-500" placeholder="{% trans "اكتب اسم المنتج" %}" required="">
+            </div>
+            <div>
+                <label for="price_iqd" class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">{% trans "السعر (IQD)" %}</label>
+                <input type="number" name="price_iqd" id="price_iqd" class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-600 focus:ring-primary-600 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-primary-500 dark:focus:ring-primary-500" placeholder="{% trans "اكتب سعر المنتج بالدينار العراقي" %}" value="{{product.price_iqd|default_if_none:''}}">
+            </div>
+            <div>
+                <label for="price_aed" class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">{% trans "السعر (AED)" %}</label>
+                <input type="number" name="price_aed" id="price_aed" class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-600 focus:ring-primary-600 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-primary-500 dark:focus:ring-primary-500" placeholder="{% trans "اكتب سعر المنتج بالدرهم الاماراتي" %}" value="{{product.price_aed|default_if_none:''}}">
+            </div>
+            <div>
+                <label for="available_sizes" class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">{% trans "المقاسات المتوفرة" %}</label>
+                <input type="text" name="available_sizes" id="available_sizes" class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-600 focus:ring-primary-600 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-primary-500 dark:focus:ring-primary-500" placeholder="{% trans "اكتب المقاسات" %}" value="{{product.available_sizes|default_if_none:''}}">
+            </div>
+            <div>
+                <label for="available_colors" class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">{% trans "الألوان المتوفرة" %}</label>
+                <input type="text" name="available_colors" id="available_colors" class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-600 focus:ring-primary-600 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-primary-500 dark:focus:ring-primary-500" placeholder="{% trans "اكتب الألوان" %}" value="{{product.available_colors|default_if_none:''}}">
+            </div>
+            <div>
+                <label for="processing_time" class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">{% trans "مدة تجهيز الطلب" %}</label>
+                <input type="text" name="processing_time" id="processing_time" class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-600 focus:ring-primary-600 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-primary-500 dark:focus:ring-primary-500" placeholder="{% trans "اكتب مدة التجهيز" %}" value="{{product.processing_time|default_if_none:''}}">
+            </div>
+            <div>
+                <label for="image" class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">{% trans "صورة المنتج" %}</label>
+                <div class="flex items-center">
+                    <input type="file" name="image" id="image" class="focus:shadow-outline-gray block w-full cursor-pointer rounded-lg border border-gray-300 bg-gray-50 text-sm text-gray-900 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-gray-400 dark:placeholder-gray-400">
+                    {% if product.image %}
+                        <img src="{{ product.image.url }}" alt="{{ product.name }}" class="mr-2 rounded-md" style="max-width: 60px; max-height: 60px;">
+                    {% endif %}
+                </div>
+            </div>
+            <div class="sm:col-span-2">
+                <label for="description" class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">{% trans "الوصف" %}</label>
+                <textarea id="description" name="description" rows="4" class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-primary-500 dark:focus:ring-primary-500" placeholder="{% trans "اكتب وصف المنتج هنا" %}">{{product.description|default_if_none:''}}</textarea>                    
+            </div>
+            <div class="flex items-center sm:col-span-2">
+                <input type="checkbox" id="is_active" name="is_active" class="h-4 w-4 rounded border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-blue-600"  {% if product.is_active %}checked{% endif %}>
+                <label for="is_active" class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">{% trans "اظهار المنتج" %}</label>
+            </div>
+            <div class="flex items-center sm:col-span-2">
+                <input type="checkbox" id="is_featured" name="is_featured" class="h-4 w-4 rounded border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-blue-600"  {% if product.is_featured %}checked{% endif %}>
+                <label for="is_featured" class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">{% trans "مميز" %}</label>
+            </div>
+        </div>
+        <button type="submit" class="inline-flex items-center rounded-lg bg-primary-700 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-primary-800 focus:outline-none focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
+            {% if product %}
+                {% trans "حفظ التغييرات" %}
+            {% else %}
+                {% trans "إضافة منتج جديد" %}
+            {% endif %}
+        </button>
+    </form>
+</div>
+
+{% endblock %}
