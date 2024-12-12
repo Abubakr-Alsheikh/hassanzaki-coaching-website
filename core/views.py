@@ -1,3 +1,5 @@
+import datetime
+from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, render, redirect
 from django.core.mail import send_mail
 from django.conf import settings  # Import settings for email configuration
@@ -5,7 +7,7 @@ from django.contrib import messages
 from django.template.loader import render_to_string
 from django.utils import timezone
 
-from .models import PricingPlan
+from .models import CoachingRequest, PricingPlan
 from .forms import CoachingRequestForm
 
 
@@ -81,3 +83,33 @@ def coaching_request_view(request, plan_id):
              form = CoachingRequestForm()
 
     return render(request, 'coaching/coaching_request_form.html', {'form': form, 'plan': plan})
+
+
+def available_times(request, date):
+    try:
+        selected_date = datetime.datetime.strptime(date, '%Y-%m-%d').date()
+    except ValueError:
+        return JsonResponse({'error': 'Invalid date format'}, status=400)
+
+    if selected_date.weekday() == 4: # Friday (index 4)
+        return JsonResponse({'available_times': []})
+
+
+    # Get existing appointments for the selected date
+    existing_appointments = CoachingRequest.objects.filter(
+        scheduled_datetime__date=selected_date
+    ).values_list('scheduled_datetime__time', flat=True)
+
+    # Define available time slots (customize as needed)
+    all_times = [
+      datetime.time(9, 0), datetime.time(10, 0), datetime.time(11, 0),
+      datetime.time(13, 0), datetime.time(14, 0), datetime.time(15, 0),
+      datetime.time(16, 0)
+    ]
+
+
+
+    available_times = [time.strftime('%H:%M') for time in all_times if time not in existing_appointments]
+
+
+    return JsonResponse({'available_times': available_times})
