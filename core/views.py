@@ -6,6 +6,7 @@ from django.conf import settings  # Import settings for email configuration
 from django.contrib import messages
 from django.template.loader import render_to_string
 from django.utils import timezone
+from django.contrib.auth.decorators import login_required
 
 from .models import CoachingRequest, PricingPlan
 from .forms import CoachingRequestForm
@@ -74,3 +75,14 @@ def coaching_request_view(request, plan_id):
              form = CoachingRequestForm()
 
     return render(request, 'coaching/coaching_request_form.html', {'form': form, 'plan': plan})
+
+@login_required
+def dashboard(request):
+    context = {'user': request.user}
+    return render(request, 'coaching/dashboard/_dashboard.html', context)
+
+@login_required
+def request_list(request):
+    coaching_requests = CoachingRequest.objects.order_by('-created_at')
+    context = {'coaching_requests': coaching_requests}
+    return render(request, 'coaching/dashboard/request_list.html', context)

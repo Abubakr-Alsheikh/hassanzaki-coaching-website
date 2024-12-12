@@ -38,7 +38,7 @@ class CoachingRequestForm(forms.ModelForm):
             'referral_source',
             'plan',
             'available_times',
-             'timezone'
+            'timezone'
         ]
 
         widgets = {

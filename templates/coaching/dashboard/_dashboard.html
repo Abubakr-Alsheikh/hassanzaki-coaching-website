@@ -1,0 +1,70 @@
+{% extends "coaching/_base_dashboard.html" %} {% load static %} {% block content %}
+<div class="antialiased dark:bg-gray-900" dir="rtl">
+  <nav class="fixed left-0 right-0 top-0 z-50 border-b border-gray-200 bg-white px-4 py-2.5 dark:border-gray-700 dark:bg-gray-800" dir="ltr">
+    <div class="flex flex-wrap items-center justify-between">
+      <div class="flex items-center justify-start">
+        <button data-drawer-target="drawer-navigation" data-drawer-toggle="drawer-navigation" aria-controls="drawer-navigation" class="mr-2 cursor-pointer rounded-lg p-2 text-gray-600 hover:bg-gray-100 hover:text-gray-900 focus:bg-gray-100 focus:ring-2 focus:ring-gray-100 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white dark:focus:bg-gray-700 dark:focus:ring-gray-700 md:hidden">
+          <svg aria-hidden="true" class="h-6 w-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+            <path fill-rule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h6a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"></path>
+          </svg>
+          <svg aria-hidden="true" class="hidden h-6 w-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+            <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+          </svg>
+          <span class="sr-only">Toggle sidebar</span>
+        </button>
+        <a href="#" class="mr-4 flex items-center justify-between"> <img src="{% static "images/logo.png" %}" class="mr-3 h-12" alt="Company" /> </a>
+      </div>
+      <div class="flex items-center lg:order-2">
+        <button type="button" class="mx-3 flex rounded-full border text-sm focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600 md:mr-0" id="user-menu-button" aria-expanded="false" data-dropdown-toggle="dropdown">
+          <span class="sr-only">Open user menu</span>
+          <img class="h-8 w-8 rounded-full" src="{% static "images/logo.png" %}" alt="user photo" />
+        </button>
+        <!-- Dropdown menu -->
+        <div class="z-50 my-4 hidden w-56 list-none divide-y divide-gray-100 rounded rounded-xl bg-white text-base shadow dark:divide-gray-600 dark:bg-gray-700" id="dropdown" dir="rtl">
+          <div class="px-4 py-3">
+            <span class="block text-sm font-semibold text-gray-900 dark:text-white">Company</span>
+          </div>
+          <ul class="py-1 text-gray-700 dark:text-gray-300" aria-labelledby="dropdown">
+            <li>
+              <form method="post" action="{% url 'logout' %}" class="w-full">
+                {% csrf_token %}
+                <button type="submit" class="block w-full px-4 py-2 text-right text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-600 dark:hover:text-white">تسجيل الخروج</button>
+              </form>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Sidebar -->
+
+  <aside class="fixed left-0 top-0 z-40 h-screen w-64 -translate-x-full border-r border-gray-200 bg-white pt-14 transition-transform dark:border-gray-700 dark:bg-gray-800 md:translate-x-0" aria-label="Sidenav" id="drawer-navigation">
+    <div class="h-full overflow-y-auto bg-white px-3 py-5 dark:bg-gray-800">
+      <ul class="space-y-2">
+        <li>
+          <a href="{% url "coaching:request_list" %}" class="group flex items-center rounded-lg p-2 text-base font-medium text-gray-900 hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700">
+            <svg aria-hidden="true" class="h-6 w-6 flex-shrink-0 text-gray-500 transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+              <path d="M8.707 7.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l2-2a1 1 0 00-1.414-1.414L11 7.586V3a1 1 0 10-2 0v4.586l-.293-.293z"></path>
+              <path d="M3 5a2 2 0 012-2h1a1 1 0 010 2H5v7h2l1 2h4l1-2h2V5h-1a1 1 0 110-2h1a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2V5z"></path>
+            </svg>
+            <span class="mr-3 flex-1 whitespace-nowrap">الرسائل</span>
+          </a>
+        </li>
+        <li>
+          <a href="#" class="group flex items-center rounded-lg p-2 text-base font-medium text-gray-900 hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700">
+            <svg aria-hidden="true" class="h-6 w-6 flex-shrink-0 text-gray-500 transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+              <path fill-rule="evenodd" d="M10 2a4 4 0 00-4 4v1H5a1 1 0 00-.994.89l-1 9A1 1 0 004 18h12a1 1 0 00.994-1.11l-1-9A1 1 0 0015 7h-1V6a4 4 0 00-4-4zm2 5V6a2 2 0 10-4 0v1h4zm-6 3a1 1 0 112 0 1 1 0 01-2 0zm7-1a1 1 0 100 2 1 1 0 000-2z" clip-rule="evenodd"></path>
+            </svg>
+            <span class="mr-3">خطط المواعيد</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </aside>
+
+  <main class="h-auto p-4 pt-20 md:ml-64">
+    {% block extra_content %} {% endblock %}
+  </main>
+</div>
+{% endblock content %}
