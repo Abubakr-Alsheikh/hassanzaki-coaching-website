@@ -31,8 +31,8 @@ def coaching_request_view(request, plan_id):
             scheduled_time = scheduled_datetime.time()
             # scheduled_datetime = timezone.datetime.combine(scheduled_date, scheduled_time) #combine date and time into datetime object
 
-            if scheduled_datetime <= timezone.now() + timezone.timedelta(hours=24):
-                messages.error(request, 'Please select a date and time at least 24 hours in the future.')
+            if scheduled_datetime <= timezone.now():
+                messages.error(request, 'Please select a date and time in the future.')
             else:
 
                 coaching_request = form.save(commit=False) # Don't save yet
