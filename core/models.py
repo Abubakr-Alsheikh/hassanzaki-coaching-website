@@ -53,3 +53,18 @@ class CoachingRequest(models.Model):
         verbose_name = "Coaching Request"
         verbose_name_plural = "Coaching Requests"
         ordering = ['-scheduled_datetime']
+
+
+class HomePageContent(models.Model):
+    hero_title = models.CharField("Hero Title", max_length=255, default="We invest in the world’s potential")
+    hero_description = models.TextField("Hero Description", default="We focus on markets where technology, innovation, and capital can unlock long-term value and drive economic growth.")
+    about_title = models.CharField("About Title", max_length=255, default="About")
+    about_description = models.TextField("About Description", default="Ex cumque tempore....")
+    about_image = models.ImageField("About Image", upload_to='home_images/', null=True, blank=True)
+
+    def __str__(self):
+        return "Home Page Content"
+
+    class Meta:
+        verbose_name = "Home Page Content"
+        verbose_name_plural = "Home Page Content"

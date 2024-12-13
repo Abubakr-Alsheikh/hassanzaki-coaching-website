@@ -18,4 +18,7 @@ urlpatterns = [
     path('dashboard/plans/create/', views.plan_create, name='plan_create'),
     path('dashboard/plans/edit/<int:plan_id>/', views.plan_edit, name='plan_edit'),
     path('dashboard/plans/delete/<int:plan_id>/', views.plan_delete, name='plan_delete'),
+    path('dashboard/home_content/', views.home_content, name='home_content'),
 ]
+
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
