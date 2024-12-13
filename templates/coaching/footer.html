@@ -1,5 +1,5 @@
 {% load static %}
-<footer class="bg-white dark:bg-gray-900">
+<footer class="bg-gray-50 dark:bg-gray-900">
     <div class="mx-auto w-full max-w-screen-xl p-4 py-6 lg:py-8">
         <div class="md:flex md:justify-between">
           <div class="mb-6 flex items-center justify-center md:mb-0 md:items-start md:justify-start">
@@ -7,7 +7,21 @@
                   <img src="{% static "images/coach.png" %}" class="me-3 h-28" alt="coach Logo" />
               </a>
           </div>
-          <div class="grid grid-cols-2 gap-8 sm:grid-cols-2 sm:gap-12">
+          <div class="grid grid-cols-1 gap-8 sm:grid-cols-3 sm:gap-12">
+            <div>
+                <h2 class="mb-6 text-sm font-semibold uppercase text-gray-900 dark:text-white">Hours (Cairo Zonetime)</h2>
+                <ul class="font-medium text-gray-500 dark:text-gray-400">
+                    <li class="mb-4">
+                        <a>Sunday - Thursday: 12am - 6pm</a>
+                    </li>
+                    <li class="mb-4">
+                        <a>Saturday: 10am - 6pm</a>
+                    </li>
+                    <li>
+                        <a>Friday: Closed</a>
+                    </li>
+                </ul>
+            </div>
               <div>
                   <h2 class="mb-6 text-sm font-semibold uppercase text-gray-900 dark:text-white">Contact</h2>
                   <ul class="font-medium text-gray-500 dark:text-gray-400">
