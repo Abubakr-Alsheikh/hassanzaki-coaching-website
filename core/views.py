@@ -29,7 +29,6 @@ def coaching_request_view(request, plan_id):
     if request.method == "POST":
         form = CoachingRequestForm(request.POST)
         if form.is_valid():
-
             selected_date = form.cleaned_data["scheduled_datetime"]
             selected_time = form.cleaned_data["available_times"]
             # Combine selected date and time
@@ -76,6 +75,10 @@ def coaching_request_view(request, plan_id):
                 "Your coaching request has been submitted successfully, wait until we contact you!",
             )
             return redirect("coaching:index")
+        else:
+            return render(
+                request, "coaching/coaching_request_form.html", {"form": form, "plan": plan}
+            )
     else:
         try:
             selected_plan = PricingPlan.objects.get(pk=plan_id)
