@@ -10,7 +10,7 @@ from django.utils import timezone
 from django.contrib.auth.decorators import login_required
 
 from .models import CoachingRequest, HomePageContent, PricingPlan
-from .forms import CoachingRequestForm
+from .forms import CoachingRequestForm, PricingPlanForm
 
 
 def index(request):
@@ -183,25 +183,14 @@ def plan_list(request):
 @login_required
 def plan_create(request):
     if request.method == "POST":
-        name = request.POST.get("name")
-        description = request.POST.get("description")
-        price = request.POST.get("price")
-        sessions = request.POST.get("sessions")
-        featured = request.POST.get("featured") == "on"
-
-        try:
-            PricingPlan.objects.create(
-                name=name,
-                description=description,
-                price=price,
-                sessions=sessions,
-                featured=featured,
-            )
+        form = PricingPlanForm(request.POST)
+        if form.is_valid():
+            form.save()
             return redirect("coaching:plan_list")
-        except ValidationError as e:
-            context = {"errors": e}
-            return render(request, "coaching/dashboard/plan_create.html", context)
-    return render(request, "coaching/dashboard/plan_create.html")
+    else:
+         form = PricingPlanForm()
+    print(form)
+    return render(request, "coaching/dashboard/plan_create.html", {"form": form})
 
 
 @login_required
@@ -211,20 +200,14 @@ def plan_edit(request, plan_id):
     """
     plan = get_object_or_404(PricingPlan, id=plan_id)
     if request.method == "POST":
-        plan.name = request.POST.get("name")
-        plan.description = request.POST.get("description")
-        plan.price = request.POST.get("price")
-        plan.sessions = request.POST.get("sessions")
-        plan.featured = request.POST.get("featured") == "on"
-        try:
-            plan.save()
+        form = PricingPlanForm(request.POST, instance=plan)
+        if form.is_valid():
+            form.save()
             return redirect("coaching:plan_list")
-        except ValidationError as e:
-            context = {"plan": plan, "errors": e}
-            return render(request, "coaching/dashboard/plan_edit.html", context)
+    else:
+      form = PricingPlanForm(instance=plan)
 
-    context = {"plan": plan}
-    return render(request, "coaching/dashboard/plan_edit.html", context)
+    return render(request, "coaching/dashboard/plan_edit.html", {"form": form, "plan":plan})
 
 
 @login_required

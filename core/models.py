@@ -8,6 +8,7 @@ class PricingPlan(models.Model):
     name = models.CharField(max_length=255, unique=True)
     description = models.TextField()
     price = models.DecimalField(max_digits=8, decimal_places=2, validators=[MinValueValidator(0)])
+    discounted_price = models.DecimalField(max_digits=8, decimal_places=2, validators=[MinValueValidator(0)], blank=True, null=True)
     sessions = models.PositiveIntegerField(validators=[MinValueValidator(1)])
     featured = models.BooleanField(default=False, help_text="Mark this plan as featured.")
 
@@ -15,7 +16,11 @@ class PricingPlan(models.Model):
         return self.name
 
     class Meta:
-        ordering = ['price']  # Order plans by price ascending
+        ordering = ['price']  # Order plans by old price ascending
+
+    @property
+    def has_discount(self):
+      return self.discounted_price is not None and self.discounted_price < self.price
 
 class CoachingRequest(models.Model):
     REFERRAL_SOURCES = (
