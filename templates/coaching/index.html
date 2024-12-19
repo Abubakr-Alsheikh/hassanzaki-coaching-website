@@ -1,72 +1,76 @@
 {% extends "coaching/_base.html" %} 
-{% block title %}Home{% endblock title %} 
+{% block title %}الرئيسية{% endblock title %} 
 {% load static %} 
 {% block content %} 
 {% if home_content %}
-<section class="bg-white dark:bg-gray-900">
-  <div class="mx-auto grid max-w-screen-xl items-center px-4 py-8 pt-2 md:justify-center lg:grid-cols-12 lg:gap-8 lg:py-16 lg:pt-12 xl:gap-0">
-    <div class="mr-auto place-self-center text-center lg:col-span-7 lg:text-left">
+<section class="bg-white dark:bg-gray-900" dir="rtl">
+  <div class="mx-auto grid max-w-screen-xl items-center px-4 py-8 pt-2 md:justify-center lg:grid-cols-12 lg:gap-8 lg:py-16 lg:pt-12 xl:gap-0 rtl:flex-row-reverse">
+    <div class="mr-auto place-self-center text-center lg:col-span-7 lg:text-right">
       <h1 class="mb-4 max-w-2xl text-4xl font-extrabold leading-none tracking-tight dark:text-white md:text-5xl xl:text-6xl">{{ home_content.hero_title }}</h1>
       <p class="mb-6 max-w-2xl font-light text-gray-500 dark:text-gray-400 md:text-lg lg:mb-8 lg:text-xl">{{ home_content.hero_description }}</p>
       <a href="#price" class="inline-flex items-center justify-center rounded-lg bg-primary-700 px-5 py-3 text-center text-base font-medium text-white hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:focus:ring-primary-900">
-        See Our Booking Plans
+        شاهد خطط الحجز الخاصة بنا
         <svg class="ms-2 h-3.5 w-3.5 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
           <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5h12m0 0L9 1m4 4L9 9" />
         </svg>
       </a>
     </div>
-    <div class="-order-1 mb-5 flex justify-center md:order-1 md:mb-0 lg:col-span-5 lg:mt-0 lg:justify-end"><img src="{% static "images/coach.png" %}" alt="mockup"></div>
+    <div class="-order-1 mb-5 flex justify-center md:order-1 md:mb-0 lg:col-span-5 lg:mt-0 lg:justify-start rtl:lg:justify-end"><img src="{% static "images/coach.png" %}" alt="mockup"></div>
   </div>
 </section>
-<section class="rounded-3xl bg-gray-50 px-4 py-8 antialiased dark:bg-gray-900 md:py-16" id="about">
+<section class="rounded-3xl bg-gray-50 px-4 py-8 antialiased dark:bg-gray-900 md:py-16" id="about" dir="rtl">
   <div class="mx-auto mb-5 max-w-screen-md text-center">
-    <h2 class="text-4xl font-extrabold tracking-tight text-gray-900 dark:text-white">About</h2>
+    <h2 class="text-4xl font-extrabold tracking-tight text-gray-900 dark:text-white">من نحن</h2>
+    <h3 class="mb-4 text-2xl tracking-tight text-gray-500 dark:text-white">استكشف شغفنا في رحلتك نحو النمو الشخصي والمهني.</h3>
   </div>
-  <div class="mx-auto grid max-w-screen-xl bg-gray-50 p-4 dark:bg-gray-800 md:p-4 lg:grid-cols-12 lg:gap-8 lg:p-8 xl:gap-16">
+  <div class="mx-auto grid max-w-screen-xl bg-gray-50 p-4 dark:bg-gray-800 md:p-4 lg:grid-cols-12 lg:gap-8 lg:p-8 xl:gap-16 rtl:flex-row-reverse">
     <div class="mb-5 lg:col-span-5">
       {% if home_content.about_image %}
       <img class="mb-4 h-full w-full rounded-2xl" src="{{ home_content.about_image.url }}" alt="peripherals" />
       {% else %} <img class="mb-4 h-full w-full rounded-2xl" src="{% static "images/hassan.jpg" %}" alt="peripherals" /> {% endif %}
     </div>
-    <div class="me-auto place-self-center lg:col-span-7">
+    <div class="me-auto place-self-center lg:col-span-7 lg:text-right">
       <h1 class="mb-3 text-2xl font-bold leading-tight tracking-tight text-gray-900 dark:text-white md:text-4xl">{{ home_content.about_title }}</h1>
       <p class="mb-6 text-gray-500 dark:text-gray-400">{{ home_content.about_description }}</p>
     </div>
   </div>
 </section>
 {% else %}
-<p>No Home Page content available</p>
+<p>لا يوجد محتوى للصفحة الرئيسية</p>
 {% endif %}
-<section class="bg-white dark:bg-gray-900" id="price">
+<section class="bg-white dark:bg-gray-900" id="price" dir="rtl">
   <div class="mx-auto max-w-screen-xl px-4 py-8 lg:px-6 lg:py-16">
     <div class="mx-auto mb-8 max-w-screen-md text-center lg:mb-12">
-      <h2 class="mb-4 text-4xl font-extrabold tracking-tight text-gray-900 dark:text-white">Our Booking Plans</h2>
+      <h2 class="mb-4 text-4xl font-extrabold tracking-tight text-gray-900 dark:text-white">خطط الحجز الخاصة بنا</h2>
+      <h3 class="mb-4 text-2xl tracking-tight text-gray-500 dark:text-white">اختر الخطة التي تناسب احتياجاتك وأهدافك.</h3>
     </div>
     <div class="space-y-8 sm:gap-6 lg:grid lg:grid-cols-3 lg:space-y-0 xl:gap-10">
       {% for plan in plans %}
       <div class="relative mx-auto flex max-w-lg flex-col rounded-lg border border-gray-100 bg-white p-6 text-center text-gray-900 shadow dark:border-gray-600 dark:bg-gray-800 dark:text-white xl:p-8">
         <h3 class="mb-4 text-2xl font-semibold">{{ plan.name }}</h3>
         <p class="font-light text-gray-500 dark:text-gray-400 sm:text-lg">{{ plan.description }}</p>
-        <div class="my-8 flex items-baseline justify-center">
+        <div class="my-8 flex items-end justify-center">
           {% if plan.has_discount %}
-          <span class="mr-2 text-gray-500 line-through">EGP {{ plan.price }}</span>
-          <span class="mr-2 text-3xl font-extrabold text-green-500">EGP {{ plan.discounted_price }}</span>
+            <div class="flex flex-col">
+                <span class="mr-2 text-gray-500 line-through">ج.م {{ plan.price }}</span>
+                <span class="mr-2 text-3xl font-extrabold text-green-500">ج.م {{ plan.discounted_price }}</span>
+            </div>
           {% else %}
-          <span class="mr-2 text-3xl font-extrabold">EGP {{ plan.price }}</span>
+          <span class="mr-2 text-3xl font-extrabold">ج.م {{ plan.price }}</span>
           {% endif %}
-          <span class="text-gray-500 dark:text-gray-400">/{{ plan.sessions }} Session{{ plan.sessions|pluralize }}</span>
+          <span class="mr-2 align-bottom text-gray-500 dark:text-gray-400">/{{ plan.sessions }} جلسة</span>
         </div>
         <ul role="list" class="mb-8 flex-1 space-y-4 text-left">
-          <li class="flex items-center space-x-3">
+          <li class="flex items-center space-x-3 rtl:space-x-reverse">
             <svg class="h-5 w-5 flex-shrink-0 text-green-500 dark:text-green-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
               <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
             </svg>
-            <span>You will have: <span class="font-semibold">{{ plan.sessions }} Session{{ plan.sessions|pluralize }}</span></span>
+            <span>سوف تحصل على: <span class="font-semibold">{{ plan.sessions }} جلسة</span></span>
           </li>
         </ul>
-        <a href="{% url 'coaching:coaching_request' plan.pk %}" class="rounded-lg bg-primary-600 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-primary-700 focus:ring-4 focus:ring-primary-200 dark:text-white dark:focus:ring-primary-900">Get started</a>
+        <a href="{% url 'coaching:coaching_request' plan.pk %}" class="rounded-lg bg-primary-600 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-primary-700 focus:ring-4 focus:ring-primary-200 dark:text-white dark:focus:ring-primary-900">ابدأ الآن</a>
         {% if plan.featured %}
-        <span class="absolute right-2 top-2 rounded-md bg-yellow-400 px-2 py-1 text-sm font-bold text-white">Featured</span>
+        <span class="absolute right-2 top-2 rounded-md bg-yellow-400 px-2 py-1 text-sm font-bold text-white">مميزة</span>
         {% endif %}
       </div>
       {% endfor %}
@@ -88,18 +92,18 @@
 <div id="successModal" tabindex="-1" aria-hidden="true" class="fixed left-0 right-0 top-0 z-50 hidden h-modal w-full items-center justify-center overflow-y-auto overflow-x-hidden md:inset-0 md:h-full">
   <div class="relative h-full w-full max-w-md p-4 md:h-auto">
     <div class="relative rounded-lg bg-white p-4 text-center shadow dark:bg-gray-800 sm:p-5">
-      <button type="button" class="absolute right-2.5 top-2.5 ml-auto inline-flex items-center rounded-lg bg-transparent p-1.5 text-sm text-gray-400 hover:bg-gray-200 hover:text-gray-900 dark:hover:bg-gray-600 dark:hover:text-white" data-modal-toggle="successModal">
+      <button type="button" class="absolute left-2.5 top-2.5 ml-auto inline-flex items-center rounded-lg bg-transparent p-1.5 text-sm text-gray-400 hover:bg-gray-200 hover:text-gray-900 dark:hover:bg-gray-600 dark:hover:text-white" data-modal-toggle="successModal">
         <svg aria-hidden="true" class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
           <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
         </svg>
-        <span class="sr-only">Close modal</span>
+        <span class="sr-only">إغلاق النافذة</span>
       </button>
       <div class="mx-auto mb-3.5 flex h-12 w-12 items-center justify-center rounded-full bg-green-100 p-2 dark:bg-green-900">
         <svg aria-hidden="true" class="h-8 w-8 text-green-500 dark:text-green-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
-        <span class="sr-only">Success</span>
+        <span class="sr-only">نجاح</span>
       </div>
       <p class="mb-4 text-lg font-semibold text-gray-900 dark:text-white">{{ message }}</p>
-      <button data-modal-toggle="successModal" type="button" class="rounded-lg bg-primary-600 px-3 py-2 text-center text-sm font-medium text-white hover:bg-primary-700 focus:outline-none focus:ring-4 focus:ring-primary-300 dark:focus:ring-primary-900">Close</button>
+      <button data-modal-toggle="successModal" type="button" class="rounded-lg bg-primary-600 px-3 py-2 text-center text-sm font-medium text-white hover:bg-primary-700 focus:outline-none focus:ring-4 focus:ring-primary-300 dark:focus:ring-primary-900">إغلاق</button>
     </div>
   </div>
 </div>

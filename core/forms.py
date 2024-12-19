@@ -15,10 +15,10 @@ class CoachingRequestForm(forms.ModelForm):
         widget=forms.Select(
             attrs={
                 "class": "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500",
-                "placeholder": "Select available time",
+                "placeholder": "اختر الوقت المتاح",
             }
         ),
-        label="Available Time",
+        label="الوقت المتاح",
     )
     timezone = forms.ChoiceField(
         choices=[(tz, tz) for tz in pytz.common_timezones],
@@ -28,7 +28,7 @@ class CoachingRequestForm(forms.ModelForm):
                 "class": "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500",
             }
         ),
-        label="Your Time Zone",
+        label="المنطقة الزمنية الخاصة بك",
     )
 
     class Meta:
@@ -50,7 +50,7 @@ class CoachingRequestForm(forms.ModelForm):
                 attrs={
                     "type": "date",
                     "class": "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500",
-                    "placeholder": "Select date",
+                    "placeholder": "اختر التاريخ",
                     "min": (timezone.now()).strftime("%Y-%m-%d"),
                 }
             ),
@@ -58,25 +58,25 @@ class CoachingRequestForm(forms.ModelForm):
                 attrs={
                     "rows": "8",
                     "class": "block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500",
-                    "placeholder": "Your details here",
+                    "placeholder": "تفاصيلك هنا",
                 }
             ),
             "name": forms.TextInput(
                 attrs={
                     "class": "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500",
-                    "placeholder": "Type your name",
+                    "placeholder": "اكتب اسمك",
                 }
             ),
             "email": forms.EmailInput(
                 attrs={
                     "class": "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500",
-                    "placeholder": "Type your email",
+                    "placeholder": "اكتب بريدك الإلكتروني",
                 }
             ),
             "phone": forms.TextInput(
                 attrs={
                     "class": "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500",
-                    "placeholder": "Type your phone",
+                    "placeholder": "اكتب رقم هاتفك",
                 }
             ),
             "referral_source": forms.Select(
@@ -107,7 +107,7 @@ class CoachingRequestForm(forms.ModelForm):
             return []
 
         if selected_date.weekday() == 4:
-            return [("", "Friday is not available")]
+            return [("", "الجمعة غير متاح")]
 
         if selected_date.weekday() == 5:
             start_hour = 10
@@ -154,7 +154,7 @@ class CoachingRequestForm(forms.ModelForm):
         if (
             not available_time_slots
         ):  # If there isn't any available time, return a "select a day" message
-            return [("", "Select a day")]
+            return [("", "اختر يوم")]
 
         return available_time_slots
 

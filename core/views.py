@@ -72,10 +72,13 @@ def coaching_request_view(request, plan_id):
 
             messages.success(
                 request,
-                "Your coaching request has been submitted successfully, wait until we contact you!",
+                "لقد تم تقديم طلب التدريب الخاص بك بنجاح، انتظر حتى نتواصل معك!",
             )
             return redirect("coaching:index")
         else:
+            for field, errors in form.errors.items():
+                for error in errors:
+                    messages.error(request, f"{form.fields[field].label}: {error}")
             return render(
                 request, "coaching/coaching_request_form.html", {"form": form, "plan": plan}
             )
@@ -189,7 +192,7 @@ def plan_create(request):
             return redirect("coaching:plan_list")
     else:
          form = PricingPlanForm()
-    print(form)
+
     return render(request, "coaching/dashboard/plan_create.html", {"form": form})
 
 

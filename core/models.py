@@ -37,7 +37,7 @@ class CoachingRequest(models.Model):
     name = models.CharField("Name", max_length=255)
     email = models.EmailField("Email", validators=[validate_email])
 
-    phone_regex = RegexValidator(regex=r'^\+?1?\d{9,15}$', message="Phone number must be entered in the format: '+999999999'. Up to 15 digits allowed.")
+    phone_regex = RegexValidator(regex=r'^\+?1?\d{9,15}$', message="يجب إدخال رقم الهاتف بالتنسيق التالي: '+999999999'. يُسمح بإدخال ما يصل إلى 15 رقمًا.")
     phone = models.CharField("Phone", validators=[phone_regex], max_length=17, blank=False)  # validators should be a list
 
     referral_source = models.CharField("Referral Source", max_length=10, choices=REFERRAL_SOURCES)
