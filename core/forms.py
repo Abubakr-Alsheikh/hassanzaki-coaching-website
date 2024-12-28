@@ -112,7 +112,7 @@ class CoachingRequestForm(forms.ModelForm):
         if selected_date.weekday() == 5:
             start_hour = 10
         else:
-            start_hour = 12
+            start_hour = 17
 
         egypt_tz = pytz.timezone("Africa/Cairo")
         if selected_timezone:
@@ -126,9 +126,14 @@ class CoachingRequestForm(forms.ModelForm):
         start_time = timezone.datetime.combine(
             selected_date, timezone.datetime.min.time()
         ).replace(hour=start_hour, minute=0)
-        end_time = timezone.datetime.combine(
-            selected_date, timezone.datetime.min.time()
-        ).replace(hour=18, minute=0)
+        if selected_date.weekday() == 5:
+            end_time = timezone.datetime.combine(
+                selected_date, timezone.datetime.min.time()
+            ).replace(hour=18, minute=0)
+        else:
+            end_time = timezone.datetime.combine(
+                selected_date, timezone.datetime.min.time()
+            ).replace(hour=23, minute=0)
         interval = timezone.timedelta(hours=1)
 
         time_slots = []
