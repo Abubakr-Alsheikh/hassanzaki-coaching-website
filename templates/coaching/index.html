@@ -1,6 +1,7 @@
 {% extends "coaching/_base.html" %} 
 {% block title %}الرئيسية{% endblock title %} 
 {% load static %} 
+{% load custom_filters %}
 {% block content %} 
 {% if home_content %}
 <section class="bg-white dark:bg-gray-900" dir="rtl">
@@ -9,7 +10,7 @@
       <h1 class="mb-4 max-w-2xl text-4xl font-extrabold leading-none tracking-tight dark:text-white md:text-5xl xl:text-6xl">{{ home_content.hero_title }}</h1>
       <p class="mb-6 max-w-2xl font-light text-gray-500 dark:text-gray-400 md:text-lg lg:mb-8 lg:text-xl">{{ home_content.hero_description }}</p>
       <a href="#price" class="inline-flex items-center justify-center rounded-lg bg-primary-700 px-5 py-3 text-center text-base font-medium text-white hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:focus:ring-primary-900">
-        شاهد خطط الحجز الخاصة بنا
+        احجز الان جلسة
         <svg class="ms-2 h-3.5 w-3.5 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
           <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5h12m0 0L9 1m4 4L9 9" />
         </svg>
@@ -47,26 +48,37 @@
     <div class="space-y-8 sm:gap-6 lg:grid lg:grid-cols-3 lg:space-y-0 xl:gap-10">
       {% for plan in plans %}
       <div class="relative mx-auto flex w-full max-w-lg flex-col rounded-lg border border-gray-100 bg-white p-6 text-center text-gray-900 shadow dark:border-gray-600 dark:bg-gray-800 dark:text-white xl:p-8">
-        <h3 class="mb-4 text-2xl font-semibold">{{ plan.name }}</h3>
-        <p class="font-light text-gray-500 dark:text-gray-400 sm:text-lg">{{ plan.description }}</p>
-        <div class="my-8 flex items-end justify-center">
+        <h3 class="text-2xl font-semibold">{{ plan.name }}</h3>
+        <div class="my-4 flex items-end justify-center">
           {% if plan.has_discount %}
             <div class="flex flex-col">
-                <span class="mr-2 text-gray-500 line-through">ج.م {{ plan.price }}</span>
-                <span class="mr-2 text-3xl font-extrabold text-green-500">ج.م {{ plan.discounted_price }}</span>
+                <span class="mr-2 text-gray-500 line-through">جنيه {{ plan.price }}</span>
+                <span class="mr-2 text-2xl font-extrabold text-green-500 sm:text-3xl">جنيه {{ plan.discounted_price }}</span>
             </div>
           {% else %}
-          <span class="mr-2 text-3xl font-extrabold">ج.م {{ plan.price }}</span>
+          <span class="mr-2 text-2xl font-extrabold sm:text-3xl">جنيه {{ plan.price }}</span>
           {% endif %}
-          <span class="mr-2 align-bottom text-gray-500 dark:text-gray-400">/{{ plan.sessions }} جلسة</span>
+          <span class="mr-2 align-bottom text-gray-500 dark:text-gray-400">({{ plan.sessions }} جلسة)</span>
         </div>
         <ul role="list" class="mb-8 flex-1 space-y-4 text-left">
-          <li class="flex items-center space-x-3 rtl:space-x-reverse">
-            <svg class="h-5 w-5 flex-shrink-0 text-green-500 dark:text-green-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+          {% if plan.has_discount %}
+          <li class="flex items-start space-x-3 rtl:space-x-reverse">
+            <svg class="mt-0.5 h-5 w-5 flex-shrink-0 text-green-500 dark:text-green-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
               <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
             </svg>
-            <span>سوف تحصل على: <span class="font-semibold">{{ plan.sessions }} جلسة</span></span>
+            <span><span class="font-semibold">توفير:</span> جنيه {{ plan.price|sub:plan.discounted_price }}</span>
           </li>
+          {% endif %}
+          {% for line in plan.description.splitlines %}
+            {% if line %}
+              <li class="flex items-start space-x-3 rtl:space-x-reverse">
+                <svg class="mt-0.5 h-5 w-5 flex-shrink-0 text-green-500 dark:text-green-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                  <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                </svg>
+                <span class="text-right">{{ line }}</span>
+              </li>
+            {% endif %}
+          {% endfor %}
         </ul>
         <a href="{% url 'coaching:coaching_request' plan.pk %}" class="rounded-lg bg-primary-600 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-primary-700 focus:ring-4 focus:ring-primary-200 dark:text-white dark:focus:ring-primary-900">ابدأ الآن</a>
         {% if plan.featured %}
