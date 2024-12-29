@@ -28,6 +28,7 @@ class CoachingRequest(models.Model):
         ('linkedin', 'LinkedIn'),
         ('twitter', 'Twitter'),
         ('facebook', 'Facebook'),
+        ('youtube', 'Youtube'),
         ('other', 'Other'),
     )
 

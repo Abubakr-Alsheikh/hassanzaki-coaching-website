@@ -8,6 +8,7 @@ from django.contrib import messages
 from django.template.loader import render_to_string
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required
+import pytz
 
 from .models import CoachingRequest, HomePageContent, PricingPlan
 from .forms import CoachingRequestForm, PricingPlanForm
@@ -16,14 +17,15 @@ from .forms import CoachingRequestForm, PricingPlanForm
 def index(request):
     plans = PricingPlan.objects.all()
     home_content = HomePageContent.objects.first()
-    return render(request, 'coaching/index.html', {'plans': plans, 'home_content': home_content})
-
+    return render(
+        request, "coaching/index.html", {"plans": plans, "home_content": home_content}
+    )
 
 def coaching_request_view(request, plan_id):
     try:
         plan = get_object_or_404(PricingPlan, pk=plan_id)
     except PricingPlan.DoesNotExist:
-        messages.error(request, "Invalid plan selected.")
+        messages.error(request, "الخطة المحددة غير صالحة.")
         return redirect("coaching:index")
 
     if request.method == "POST":
@@ -31,6 +33,8 @@ def coaching_request_view(request, plan_id):
         if form.is_valid():
             selected_date = form.cleaned_data["scheduled_datetime"]
             selected_time = form.cleaned_data["available_times"]
+            user_timezone = form.cleaned_data["timezone"]
+
             # Combine selected date and time
             combined_datetime_str = (
                 f"{selected_date.strftime('%Y-%m-%d')} {selected_time}"
@@ -38,41 +42,76 @@ def coaching_request_view(request, plan_id):
             combined_datetime = timezone.datetime.strptime(
                 combined_datetime_str, "%Y-%m-%d %H:%M"
             )
+
+            # 1. Localize the combined datetime to the default timezone (e.g., 'Africa/Cairo')
+            egypt_tz = pytz.timezone(
+                "Africa/Cairo"
+            )  # Or settings.TIME_ZONE if you have it set
+            localized_datetime = egypt_tz.localize(combined_datetime)
+
+            # 2. Convert the localized datetime to the user's timezone
+            user_tz = pytz.timezone(user_timezone)
+            user_datetime = localized_datetime.astimezone(user_tz)
+
+            # 3. Save the datetime to the database in UTC
             coaching_request = form.save(commit=False)
-            coaching_request.scheduled_datetime = combined_datetime
+            coaching_request.scheduled_datetime = localized_datetime.astimezone(
+                pytz.utc
+            )  # Save in UTC
             coaching_request.plan = plan
             coaching_request.save()
-            # Send email to the user
-            # user_email = form.cleaned_data['email']
-            # user_name = form.cleaned_data['name']
-            # context = {
-            #     'name': user_name,
-            #     'scheduled_date':coaching_request.scheduled_datetime.strftime("%Y-%m-%d"),
-            #     'scheduled_time': coaching_request.scheduled_datetime.strftime("%H:%M"),
-            # }
-            # subject = 'Your Coaching Request Confirmation'
-            # html_message = render_to_string('emails/coaching_request_confirmation.html', context)
-            # send_mail(subject, '', settings.DEFAULT_FROM_EMAIL,[user_email], html_message=html_message, fail_silently=False)
 
-            # # Send email to the coach/admin
-            # admin_email = settings.ADMIN_EMAIL  # Replace with your admin email
-            # admin_context = {
-            #     'name': user_name,
-            #     'phone': form.cleaned_data['phone'],
-            #     'email':user_email,
-            #     'scheduled_date': coaching_request.scheduled_datetime.strftime("%Y-%m-%d"),
-            #     'scheduled_time': coaching_request.scheduled_datetime.strftime("%H:%M"),
-            #     'coaching_niche': form.cleaned_data['coaching_niche'],
-            #     'details':form.cleaned_data['details'],
+            user_email = form.cleaned_data["email"]
+            user_name = form.cleaned_data["name"]
 
-            # }
-            # admin_subject = f'New Coaching Request from {user_name}'
-            # admin_html_message = render_to_string('emails/new_coaching_request_notification.html', admin_context)
-            # send_mail(admin_subject, '', settings.DEFAULT_FROM_EMAIL, [admin_email], html_message=admin_html_message, fail_silently=False)
+            # User email context (in user's timezone)
+            context = {
+                "name": user_name,
+                "scheduled_date": user_datetime.strftime("%Y-%m-%d"),
+                "scheduled_time": user_datetime.strftime("%I:%M %p"),
+                "plan_name": plan.name,
+            }
+            subject = "تأكيد طلب الاستشارة التدريبية الخاص بك"
+            html_message = render_to_string(
+                "coaching/emails/coaching_request_confirmation.html", context
+            )
+            send_mail(
+                subject,
+                "",
+                settings.DEFAULT_FROM_EMAIL,
+                [user_email],
+                html_message=html_message,
+                fail_silently=False,
+            )
+
+            # Admin email context (in default/Egypt timezone)
+            admin_email = settings.ADMIN_EMAIL
+            admin_context = {
+                "name": user_name,
+                "phone": form.cleaned_data["phone"],
+                "email": user_email,
+                "scheduled_date": localized_datetime.strftime("%Y-%m-%d"),
+                "scheduled_time": localized_datetime.strftime("%I:%M %p"),
+                "timezone": user_timezone,
+                "details": form.cleaned_data["details"],
+                "plan_name": plan.name,
+            }
+            admin_subject = f"طلب استشارة تدريبية جديد من {user_name}"
+            admin_html_message = render_to_string(
+                "coaching/emails/new_coaching_request_notification.html", admin_context
+            )
+            send_mail(
+                admin_subject,
+                "",
+                settings.DEFAULT_FROM_EMAIL,
+                [admin_email],
+                html_message=admin_html_message,
+                fail_silently=False,
+            )
 
             messages.success(
                 request,
-                "لقد تم تقديم طلب التدريب الخاص بك بنجاح، انتظر حتى نتواصل معك!",
+                "تم تقديم طلب الاستشارة التدريبية الخاص بك بنجاح، وسوف نتواصل معك قريباً لتأكيد الموعد!",
             )
             return redirect("coaching:index")
         else:
@@ -80,19 +119,16 @@ def coaching_request_view(request, plan_id):
                 for error in errors:
                     messages.error(request, f"{form.fields[field].label}: {error}")
             return render(
-                request, "coaching/coaching_request_form.html", {"form": form, "plan": plan}
+                request,
+                "coaching/coaching_request_form.html",
+                {"form": form, "plan": plan},
             )
     else:
-        try:
-            selected_plan = PricingPlan.objects.get(pk=plan_id)
-            form = CoachingRequestForm(initial={"plan": selected_plan})
-        except PricingPlan.DoesNotExist:
-            form = CoachingRequestForm()
+        form = CoachingRequestForm(initial={"plan": plan})
 
     return render(
         request, "coaching/coaching_request_form.html", {"form": form, "plan": plan}
     )
-
 
 @login_required
 def dashboard(request):
@@ -103,27 +139,29 @@ def dashboard(request):
 @login_required
 def home_content(request):
     """Displays the form to edit the home page content."""
-    home_content, created = HomePageContent.objects.get_or_create()  # Get or create a single object
-    if request.method == 'POST':
-        home_content.hero_title = request.POST.get('hero_title')
-        home_content.hero_description = request.POST.get('hero_description')
-        home_content.about_title = request.POST.get('about_title')
-        home_content.about_description = request.POST.get('about_description')
+    home_content, created = (
+        HomePageContent.objects.get_or_create()
+    )  # Get or create a single object
+    if request.method == "POST":
+        home_content.hero_title = request.POST.get("hero_title")
+        home_content.hero_description = request.POST.get("hero_description")
+        home_content.about_title = request.POST.get("about_title")
+        home_content.about_description = request.POST.get("about_description")
 
         # handle image upload
-        if 'about_image' in request.FILES:
-            home_content.about_image = request.FILES['about_image']
-
+        if "about_image" in request.FILES:
+            home_content.about_image = request.FILES["about_image"]
 
         try:
-           home_content.save()
-           return redirect('coaching:home_content')
+            home_content.save()
+            return redirect("coaching:home_content")
         except ValidationError as e:
-            context = {'home_content': home_content, 'errors': e}
-            return render(request, 'coaching/dashboard/home_content.html', context)
+            context = {"home_content": home_content, "errors": e}
+            return render(request, "coaching/dashboard/home_content.html", context)
 
-    context = {'home_content': home_content}
-    return render(request, 'coaching/dashboard/home_content.html', context)
+    context = {"home_content": home_content}
+    return render(request, "coaching/dashboard/home_content.html", context)
+
 
 @login_required
 def request_list(request):
@@ -191,7 +229,7 @@ def plan_create(request):
             form.save()
             return redirect("coaching:plan_list")
     else:
-         form = PricingPlanForm()
+        form = PricingPlanForm()
 
     return render(request, "coaching/dashboard/plan_create.html", {"form": form})
 
@@ -208,9 +246,11 @@ def plan_edit(request, plan_id):
             form.save()
             return redirect("coaching:plan_list")
     else:
-      form = PricingPlanForm(instance=plan)
+        form = PricingPlanForm(instance=plan)
 
-    return render(request, "coaching/dashboard/plan_edit.html", {"form": form, "plan":plan})
+    return render(
+        request, "coaching/dashboard/plan_edit.html", {"form": form, "plan": plan}
+    )
 
 
 @login_required

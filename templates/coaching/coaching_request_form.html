@@ -74,7 +74,14 @@
         const availableTimesSelect = document.getElementById('id_available_times');
         const form = document.querySelector('form');
 
+        // Autodetect and set user's timezone
+        const detectedTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+        if (detectedTimeZone) {
+            timezoneSelect.value = detectedTimeZone;
+        }
+
         function updateAvailableTimes() {
+            availableTimesSelect.disabled = true; // Disable the select dropdown
             const selectedDate = dateInput.value;
             const selectedTimezone = timezoneSelect.value;
 
@@ -96,12 +103,22 @@
                const doc = parser.parseFromString(html, 'text/html');
                 const newAvailableTimesSelect = doc.getElementById('id_available_times')
                 availableTimesSelect.innerHTML = newAvailableTimesSelect.innerHTML;
+                availableTimesSelect.disabled = false; // Re-enable after updating
            })
-           .catch(error => console.error('Error:', error));
+           .catch(error => {
+               console.error('Error:', error);
+               availableTimesSelect.disabled = false; // Re-enable even on error to prevent indefinite disabling
+           });
 
         }
+
         dateInput.addEventListener('change', updateAvailableTimes);
         timezoneSelect.addEventListener('change', updateAvailableTimes);
+
+        // Disable initially if date or timezone has a value on page load
+        if (dateInput.value || timezoneSelect.value) {
+            availableTimesSelect.disabled = true;
+        }
     });
 </script>
 {% endblock content %}
