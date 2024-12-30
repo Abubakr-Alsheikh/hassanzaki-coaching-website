@@ -1,5 +1,5 @@
 {% extends "coaching/dashboard/_dashboard.html" %}
-
+{% load tz %}
 {% block extra_content %}
 
 <div class="mb-4">
@@ -15,7 +15,8 @@
                 <th scope="col" class="px-6 py-3">الاسم</th>
                 <th scope="col" class="px-6 py-3">البريد الإلكتروني</th>
                 <th scope="col" class="px-6 py-3">الهاتف</th>
-                <th scope="col" class="px-6 py-3">التاريخ والوقت المجدول</th>
+                <th scope="col" class="px-6 py-3">التاريخ</th>
+                <th scope="col" class="px-6 py-3">الوقت المجدول</th>
                 <th scope="col" class="px-6 py-3">المنطقة الزمنية</th>
                 <th scope="col" class="px-6 py-3">مصدر الإحالة</th>
                 <th scope="col" class="px-6 py-3">الخطة</th>
@@ -29,7 +30,8 @@
                     <td class="whitespace-nowrap px-6 py-4 font-medium text-gray-900 dark:text-white">{{ request.name }}</td>
                     <td class="px-6 py-4">{{ request.email }}</td>
                     <td class="px-6 py-4">{{ request.phone }}</td>
-                    <td class="px-6 py-4">{{ request.scheduled_datetime|date:"Y-m-d H:i" }}</td>
+                    <td>{{ request.scheduled_datetime|timezone:"Africa/Cairo"|date:"Y-m-d" }}</td>
+                    <td>{{ request.scheduled_datetime|timezone:"Africa/Cairo"|time:"h:i A" }}</td>
                     <td class="px-6 py-4">{{ request.timezone }}</td>
                     <td class="px-6 py-4">
                         {% for source_value, source_display in request.REFERRAL_SOURCES %}

@@ -55,10 +55,18 @@ def coaching_request_view(request, plan_id):
 
             # 3. Save the datetime to the database in UTC
             coaching_request = form.save(commit=False)
-            coaching_request.scheduled_datetime = localized_datetime.astimezone(
-                pytz.utc
-            )  # Save in UTC
+            coaching_request.scheduled_datetime = localized_datetime.astimezone(pytz.utc)  # Save in UTC
             coaching_request.plan = plan
+
+            # Check for double-booking before saving
+            is_double_booked = CoachingRequest.objects.filter(
+                scheduled_datetime=coaching_request.scheduled_datetime
+            ).exists()
+
+            if is_double_booked:
+                messages.error(request, "This time slot has already been booked. Please choose another time.")
+                return render(request, "coaching/coaching_request_form.html", {"form": form, "plan": plan})
+
             coaching_request.save()
 
             user_email = form.cleaned_data["email"]

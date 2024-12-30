@@ -88,78 +88,73 @@ class CoachingRequestForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        # Populate initial time choices using the current date and selected timezone
         if "scheduled_datetime" not in self.data:
             initial_date = timezone.now().date()
-            self.data["scheduled_datetime"] = initial_date.strftime("%Y-%m-%d")
+            if 'scheduled_datetime' not in self.initial:  # Prevent overwriting initial data
+                self.initial["scheduled_datetime"] = initial_date.strftime("%Y-%m-%d")
         self.fields["available_times"].choices = self.get_available_time_choices()
 
     def get_available_time_choices(self):
-        selected_date = self.data.get("scheduled_datetime")
-        selected_timezone = self.data.get("timezone")
+        selected_date_str = self.data.get("scheduled_datetime") or self.initial.get("scheduled_datetime")
+        selected_timezone_str = self.data.get("timezone") or self.initial.get("timezone")
 
-        if not selected_date:
+        if not selected_date_str:
             return []
 
         try:
-            selected_date = timezone.datetime.strptime(selected_date, "%Y-%m-%d").date()
+            selected_date = timezone.datetime.strptime(selected_date_str, "%Y-%m-%d").date()
         except (ValueError, TypeError):
             return []
 
-        if selected_date.weekday() == 4:
+        # Handle Fridays and Saturdays
+        if selected_date.weekday() == 4:  # Friday
             return [("", "الجمعة غير متاح")]
 
-        if selected_date.weekday() == 5:
-            start_hour = 10
-        else:
-            start_hour = 17
+        # Set start time based on the day
+        start_hour = 10 if selected_date.weekday() == 5 else 17  # 10 AM for Saturday, 5 PM for other days
 
+        # Timezone Handling
         egypt_tz = pytz.timezone("Africa/Cairo")
-        if selected_timezone:
-            try:
-                user_tz = pytz.timezone(selected_timezone)
-            except pytz.exceptions.UnknownTimeZoneError:
-                user_tz = egypt_tz
-        else:
+        try:
+            user_tz = pytz.timezone(selected_timezone_str) if selected_timezone_str else egypt_tz
+        except pytz.exceptions.UnknownTimeZoneError:
             user_tz = egypt_tz
 
-        start_time = timezone.datetime.combine(
-            selected_date, timezone.datetime.min.time()
-        ).replace(hour=start_hour, minute=0)
-        if selected_date.weekday() == 5:
-            end_time = timezone.datetime.combine(
-                selected_date, timezone.datetime.min.time()
-            ).replace(hour=18, minute=0)
-        else:
-            end_time = timezone.datetime.combine(
-                selected_date, timezone.datetime.min.time()
-            ).replace(hour=23, minute=0)
-        interval = timezone.timedelta(hours=1)
+        # Define start and end times (timezone-aware)
+        start_time = egypt_tz.localize(
+            timezone.datetime(selected_date.year, selected_date.month, selected_date.day, start_hour, 0)
+        )
+        end_time = egypt_tz.localize(
+            timezone.datetime(selected_date.year, selected_date.month, selected_date.day, 18 if selected_date.weekday() == 5 else 23, 0)
+        )
 
+        # Filter out past times (always use Egypt time for comparison)
+        now_egypt_tz = timezone.now().astimezone(egypt_tz)
+        if start_time < now_egypt_tz:
+            # Adjust start_time to the next full hour in Egypt time
+            start_time = now_egypt_tz.replace(minute=0, second=0, microsecond=0) + timezone.timedelta(hours=1)
+
+        # Create time slots
         time_slots = []
         current_time = start_time
-        while current_time < end_time:
-            egypt_time = egypt_tz.localize(current_time)
-            user_time = egypt_time.astimezone(user_tz)
-            if user_time > timezone.now():  # Check if the time is not in the past.
-                time_str = user_time.strftime("%I:%M %p")
-                time_slots.append((current_time.strftime("%H:%M"), time_str))
-            current_time += interval
+        while current_time <= end_time:
+            user_time = current_time.astimezone(user_tz)
+            time_str = user_time.strftime("%I:%M %p")
+            time_slots.append((current_time.strftime("%H:%M"), time_str))
+            current_time += timezone.timedelta(hours=1)
 
-        # Filter out unavailable times (from existing requests).
+        # Filter out unavailable times
         unavailable_times = CoachingRequest.objects.filter(
             scheduled_datetime__date=selected_date
-        ).values_list("scheduled_datetime__time", flat=True)
+        ).values_list("scheduled_datetime", flat=True)
 
-        unavailable_times_str = [time.strftime("%H:%M") for time in unavailable_times]
+        unavailable_times_str = [time.astimezone(egypt_tz).strftime("%H:%M") for time in unavailable_times]
         available_time_slots = [
             slot for slot in time_slots if slot[0] not in unavailable_times_str
         ]
 
-        if (
-            not available_time_slots
-        ):  # If there isn't any available time, return a "select a day" message
-            return [("", "اختر يوم")]
+        if not available_time_slots:
+            return [("", "لا يوجد أوقات متاحة في هذا اليوم")]
 
         return available_time_slots
 
