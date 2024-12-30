@@ -78,6 +78,8 @@
         const detectedTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
         if (detectedTimeZone) {
             timezoneSelect.value = detectedTimeZone;
+            // Call updateAvailableTimes after setting the timezone
+            updateAvailableTimes();
         }
 
         function updateAvailableTimes() {
@@ -94,7 +96,7 @@
                 body: new URLSearchParams({
                     'scheduled_datetime': selectedDate,
                     'timezone': selectedTimezone,
-                    'available_times': ''
+                    'available_times': '' // Sending an empty value to trigger time update
                 })
            })
            .then(response => response.text())
@@ -115,10 +117,6 @@
         dateInput.addEventListener('change', updateAvailableTimes);
         timezoneSelect.addEventListener('change', updateAvailableTimes);
 
-        // Disable initially if date or timezone has a value on page load
-        if (dateInput.value || timezoneSelect.value) {
-            availableTimesSelect.disabled = true;
-        }
     });
 </script>
 {% endblock content %}
