@@ -11,7 +11,7 @@ from django.contrib.auth.decorators import login_required
 import pytz
 
 from .models import Certification, CoachingRequest, HomePageContent, PricingPlan
-from .forms import CoachingRequestForm, PricingPlanForm
+from .forms import CertificationForm, CoachingRequestForm, PricingPlanForm
 
 
 def index(request):
@@ -273,4 +273,50 @@ def plan_delete(request, plan_id):
         return redirect("coaching:plan_list")
     return render(
         request, "coaching/dashboard/plan_delete_confirmation.html", {"plan": plan}
+    )
+
+
+# Certification Views
+@login_required
+def certification_list(request):
+    """Displays a list of all certifications."""
+    certifications = Certification.objects.all()
+    context = {"certifications": certifications}
+    return render(request, "coaching/dashboard/certification_list.html", context)
+
+@login_required
+def certification_create(request):
+    if request.method == "POST":
+        form = CertificationForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect("coaching:certification_list")
+    else:
+        form = CertificationForm()
+    return render(request, "coaching/dashboard/certification_create.html", {"form": form})
+
+@login_required
+def certification_edit(request, certification_id):
+    """Displays a form to edit an existing certification and handles the update."""
+    certification = get_object_or_404(Certification, id=certification_id)
+    if request.method == "POST":
+        form = CertificationForm(request.POST, request.FILES, instance=certification)
+        if form.is_valid():
+            form.save()
+            return redirect("coaching:certification_list")
+    else:
+        form = CertificationForm(instance=certification)
+    return render(
+        request, "coaching/dashboard/certification_edit.html", {"form": form, "certification": certification}
+    )
+
+@login_required
+def certification_delete(request, certification_id):
+    """Deletes a certification using its ID after confirmation."""
+    certification = get_object_or_404(Certification, id=certification_id)
+    if request.method == "POST":
+        certification.delete()
+        return redirect("coaching:certification_list")
+    return render(
+        request, "coaching/dashboard/certification_delete_confirmation.html", {"certification": certification}
     )

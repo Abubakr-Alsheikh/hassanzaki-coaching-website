@@ -1,5 +1,5 @@
 from django import forms
-from .models import CoachingRequest, PricingPlan
+from .models import Certification, CoachingRequest, PricingPlan
 from django.utils import timezone
 from django.core.exceptions import ValidationError
 import pytz
@@ -209,3 +209,9 @@ class PricingPlanForm(forms.ModelForm):
           if discounted_price >= price:
             self.add_error('discounted_price', "يجب أن يكون السعر الجديد أقل من السعر الأصلي.")
         return cleaned_data
+
+
+class CertificationForm(forms.ModelForm):
+    class Meta:
+        model = Certification
+        fields = ['title', 'subtitle', 'details', 'image']

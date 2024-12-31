@@ -19,6 +19,11 @@ urlpatterns = [
     path('dashboard/plans/edit/<int:plan_id>/', views.plan_edit, name='plan_edit'),
     path('dashboard/plans/delete/<int:plan_id>/', views.plan_delete, name='plan_delete'),
     path('dashboard/home_content/', views.home_content, name='home_content'),
+    # Certifications Dashboard URLs
+    path('dashboard/certifications/', views.certification_list, name='certification_list'),
+    path('dashboard/certifications/create/', views.certification_create, name='certification_create'),
+    path('dashboard/certifications/edit/<int:certification_id>/', views.certification_edit, name='certification_edit'),
+    path('dashboard/certifications/delete/<int:certification_id>/', views.certification_delete, name='certification_delete'),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

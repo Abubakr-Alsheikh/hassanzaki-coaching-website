@@ -1,0 +1,58 @@
+{% extends "coaching/dashboard/_dashboard.html" %}
+{% block extra_content %}
+    <div class="container mx-auto mt-10">
+        <div class="mb-4 rounded bg-white px-8 pb-8 pt-6 shadow-md">
+            <h2 class="mb-6 text-2xl font-bold">إضافة شهادة جديدة</h2>
+            {% if form.errors %}
+                <div class="relative mb-4 rounded border border-red-400 bg-red-100 px-4 py-3 text-red-700" role="alert">
+                    <strong class="font-bold">خطأ!</strong>
+                    {% for field, errors in form.errors.items %}
+                        {% for error in errors %}
+                            <span class="block sm:inline">{{ error }}</span>
+                        {% endfor %}
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="mb-4">
+                    <label class="mb-2 block text-sm font-bold text-gray-700" for="{{ form.title.id_for_label }}">
+                        اسم الشهادة
+                    </label>
+                    <input class="focus:shadow-outline w-full appearance-none rounded border px-3 py-2 leading-tight text-gray-700 shadow focus:outline-none"
+                           id="{{ form.title.id_for_label }}" name="{{ form.title.name }}" type="text" placeholder="اسم الشهادة" required>
+                </div>
+                <div class="mb-4">
+                    <label class="mb-2 block text-sm font-bold text-gray-700" for="{{ form.subtitle.id_for_label }}">
+                        المصدر
+                    </label>
+                    <input class="focus:shadow-outline w-full appearance-none rounded border px-3 py-2 leading-tight text-gray-700 shadow focus:outline-none"
+                           id="{{ form.subtitle.id_for_label }}" name="{{ form.subtitle.name }}" type="text" placeholder="مصدر الشهادة" required>
+                </div>
+                <div class="mb-4">
+                    <label class="mb-2 block text-sm font-bold text-gray-700" for="{{ form.details.id_for_label }}">
+                        التفاصيل
+                    </label>
+                    <textarea class="focus:shadow-outline w-full appearance-none rounded border px-3 py-2 leading-tight text-gray-700 shadow focus:outline-none"
+                              id="{{ form.details.id_for_label }}" name="{{ form.details.name }}" placeholder="تفاصيل الشهادة" rows="4" required></textarea>
+                </div>
+                <div class="mb-4">
+                    <label class="mb-2 block text-sm font-bold text-gray-700" for="{{ form.image.id_for_label }}">
+                        الصورة
+                    </label>
+                    <input class="focus:shadow-outline w-full appearance-none rounded border px-3 py-2 leading-tight text-gray-700 shadow focus:outline-none"
+                           id="{{ form.image.id_for_label }}" name="{{ form.image.name }}" type="file" placeholder="صورة الشهادة">
+                </div>
+
+                <div class="flex items-center justify-between">
+                    <button class="focus:shadow-outline rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700 focus:outline-none"
+                            type="submit">
+                        إضافة
+                    </button>
+                    <a href="{% url 'coaching:certification_list' %}" class="focus:shadow-outline ms-2 rounded bg-gray-500 px-4 py-2 font-bold text-white hover:bg-gray-700 focus:outline-none">إلغاء</a>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}
