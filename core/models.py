@@ -77,3 +77,13 @@ class HomePageContent(models.Model):
     class Meta:
         verbose_name = "Home Page Content"
         verbose_name_plural = "Home Page Content"
+
+
+class Certification(models.Model):
+    title = models.CharField(max_length=255)
+    subtitle = models.CharField(max_length=255, help_text="Source of the certification")
+    details = models.TextField()
+    image = models.ImageField(upload_to='certifications/', blank=True, null=True)
+
+    def __str__(self):
+        return self.title

@@ -10,15 +10,16 @@ from django.utils import timezone
 from django.contrib.auth.decorators import login_required
 import pytz
 
-from .models import CoachingRequest, HomePageContent, PricingPlan
+from .models import Certification, CoachingRequest, HomePageContent, PricingPlan
 from .forms import CoachingRequestForm, PricingPlanForm
 
 
 def index(request):
     plans = PricingPlan.objects.all()
     home_content = HomePageContent.objects.first()
+    certifications = Certification.objects.all() 
     return render(
-        request, "coaching/index.html", {"plans": plans, "home_content": home_content}
+        request, "coaching/index.html", {"plans": plans, "home_content": home_content, 'certifications': certifications}
     )
 
 def coaching_request_view(request, plan_id):
