@@ -15,73 +15,86 @@ class CoachingRequestForm(forms.ModelForm):
         widget=forms.Select(
             attrs={
                 "class": "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500",
-                "placeholder": "اختر الوقت المتاح",
             }
         ),
         label="الوقت المتاح",
+        help_text="اختر الوقت المناسب لك بناءً على المنطقة الزمنية المحددة.",
     )
     timezone = forms.ChoiceField(
         choices=[(tz, tz) for tz in pytz.common_timezones],
-        initial="Africa/Cairo",  # Default timezone is Egypt
+        initial="Africa/Cairo",
         widget=forms.Select(
             attrs={
                 "class": "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500",
             }
         ),
-        label="المنطقة الزمنية الخاصة بك",
+        label="المنطقة الزمنية",
+        help_text="يرجى تحديد منطقتك الزمنية لتظهر لك الأوقات المتاحة بشكل صحيح.",
     )
 
     class Meta:
         model = CoachingRequest
         fields = [
-            "scheduled_datetime",
-            "details",
-            "name",
-            "email",
-            "phone",
-            "referral_source",
-            "plan",
-            "available_times",
             "timezone",
+            "scheduled_datetime",
+            "available_times",
+            "name",
+            "phone",
+            "email",
+            "referral_source",
+            "details",
         ]
-
+        labels = {
+            "scheduled_datetime": "التاريخ المقترح للجلسة",
+            "details": "رسالتك أو تفاصيل إضافية (اختياري)",
+            "name": "اسمك بالكامل",
+            "email": "بريدك الإلكتروني",
+            "phone": "رقم هاتفك للتواصل",
+            "referral_source": "كيف سمعت عني؟",
+        }
+        help_texts = {
+            "phone": "مثال: 2010XXXXXXXX+",
+            "scheduled_datetime": "اختر التاريخ المفضل لجلسة التدريب. سيتم عرض الأوقات المتاحة بعد اختيار التاريخ والمنطقة الزمنية.",
+        }
         widgets = {
             "scheduled_datetime": forms.DateInput(
                 attrs={
                     "type": "date",
                     "class": "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500",
                     "placeholder": "اختر التاريخ",
-                    "min": (timezone.now()).strftime("%Y-%m-%d"),
-                }
-            ),
-            "details": forms.Textarea(
-                attrs={
-                    "rows": "8",
-                    "class": "block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500",
-                    "placeholder": "تفاصيلك هنا",
+                    "min": (timezone.now().date()).strftime("%Y-%m-%d"),
                 }
             ),
             "name": forms.TextInput(
                 attrs={
                     "class": "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500",
-                    "placeholder": "اكتب اسمك",
+                    "placeholder": "أدخل اسمك كاملاً",
                 }
             ),
             "email": forms.EmailInput(
                 attrs={
                     "class": "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500",
-                    "placeholder": "اكتب بريدك الإلكتروني",
+                    "placeholder": "أدخل عنوان بريدك الإلكتروني (example@domain.com)",
+                    "dir": "ltr",
                 }
             ),
             "phone": forms.TextInput(
                 attrs={
                     "class": "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500",
-                    "placeholder": "اكتب رقم هاتفك",
+                    "placeholder": "أدخل رقم هاتفك (مثال: 201234567890+)",
+                    "dir": "ltr",
                 }
             ),
             "referral_source": forms.Select(
                 attrs={
                     "class": "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                }
+            ),
+            "details": forms.Textarea(
+                attrs={
+                    "rows": "4",
+                    "class": "block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500",
+                    "placeholder": "شاركنا بتفاصيل حول ما تأمل تحقيقه من الجلسة (اختياري)",
                 }
             ),
         }
