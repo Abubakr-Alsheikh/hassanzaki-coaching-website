@@ -1,60 +1,110 @@
-{% load compress %}
-{% load static %}
+{% load compress %} {% load static %}
 
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}{% endblock title %}</title>
+    <!-- Primary Meta Tags -->
+    <title>{% block title %}حسن زكي | مدرب تطوير الذات{% endblock title %}</title>
+    <meta name="title" content="{% block meta_title %}حسن زكي | مدرب تطوير الذات واكتشافها{% endblock meta_title %}" />
+    <meta name="description" content="{% block meta_description %}أنا حسن زكي، مدرب متخصص في اكتشاف وتطوير الذات وتحسين العلاقات. أساعدك لاكتشاف ذاتك، التغلب على مخاوفك، وتحقيق حياة ذات معنى. ابدأ رحلتك الآن!{% endblock meta_description %}" />
+    <meta name="keywords" content="{% block meta_keywords %}تطوير الذات، اكتشاف الذات، تحسين العلاقات، كوتشينج، إرشاد نفسي، حسن زكي، مدرب، أهداف، مخاوف، حياة ذات معنى، قرارات، شغف، علاقات{% endblock meta_keywords %}" />
+    <meta name="author" content="Hassan Zaki" />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="{% block og_url %}{{ request.build_absolute_uri }}{% endblock og_url %}" />
+    <meta property="og:title" content="{% block og_title %}حسن زكي | مدرب تطوير الذات واكتشافها{% endblock og_title %}" />
+    <meta property="og:description" content="{% block og_description %}أنا حسن زكي، مدرب متخصص في اكتشاف وتطوير الذات وتحسين العلاقات. أساعدك لاكتشاف ذاتك، التغلب على مخاوفك، وتحقيق حياة ذات معنى. ابدأ رحلتك الآن{% endblock og_description %}" />
+    <meta property="og:image" content="{% block og_image %}{% static "images/hassan.jpg" %}{% endblock og_image %}">
+    <meta property="og:image:alt" content="{% block og_image_alt %}صورة حسن زكي{% endblock og_image_alt %}" />
+    <meta property="og:locale" content="ar_AR" />
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content="{% block twitter_url %}{{ request.build_absolute_uri }}{% endblock twitter_url %}" />
+    <meta property="twitter:title" content="{% block twitter_title %}حسن زكي | مدرب تطوير الذات واكتشافها{% endblock twitter_title %}" />
+    <meta property="twitter:description" content="{% block twitter_description %}أنا حسن زكي، مدرب متخصص في اكتشاف وتطوير الذات وتحسين العلاقات. أساعدك لاكتشاف ذاتك، التغلب على مخاوفك، وتحقيق حياة ذات معنى. ابدأ رحلتك الآن{% endblock twitter_description %}" />
+    <meta property="twitter:image" content="{% block twitter_image %}{% static "images/hassan.jpg" %}{% endblock twitter_image %}">
+    <meta property="twitter:image:alt" content="{% block twitter_image_alt %}صورة حسن زكي{% endblock twitter_image_alt %}" />
+
+    <!-- Favicon -->
     <link rel="shortcut icon" type="image/x-icon" href="{% static "images/coach.png" %}" />
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Changa:wght@200..800&family=Noto+Kufi+Arabic:wght@100..900&family=Noto+Sans+Arabic:wght@100..900&family=Tajawal:wght@200;300;400;500;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
-    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Changa:wght@200..800&family=Noto+Kufi+Arabic:wght@100..900&family=Noto+Sans+Arabic:wght@100..900&family=Tajawal:wght@200;300;400;500;700;800;900&display=swap" rel="stylesheet" />
+
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" />
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
     {% compress css %}
-    <link rel="stylesheet" href="{% static 'src/output.css' %}">
+    <link rel="stylesheet" href="{% static 'src/output.css' %}" />
     {% endcompress %}
+
     <style>
-        .featured-badge {
-            position: absolute; /* Make the badge positioned */
-            top: 0.5rem; /* Adjust top position */
-            right: 0.5rem; /* Adjust right position */
-            background-color: #FFD700; /* Example color, adjust as needed */
-            color: #000; /* Text color */
-            padding: 0.25rem 0.5rem;
-            border-radius: 0.25rem; /* Rounded corners */
-            font-weight: bold;
-          }
-        *{
-            font-family: "Changa", serif;
-            font-optical-sizing: auto;
-            font-weight: <weight>;
-            font-style: normal;
-        }
-        html {
-            scroll-behavior: smooth;
-          }
+      /* Your existing styles... */
+      .featured-badge {
+        position: absolute;
+        top: 0.5rem;
+        right: 0.5rem;
+        background-color: #ffd700;
+        color: #000;
+        padding: 0.25rem 0.5rem;
+        border-radius: 0.25rem;
+        font-weight: bold;
+      }
+
+      * {
+        font-family: "Changa", serif;
+        font-optical-sizing: auto;
+        font-weight: <weight>;
+        font-style: normal;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
     </style>
+    <!-- Canonical URL -->
+    <link rel="canonical" href="{% block canonical_url %}{{ request.build_absolute_uri }}{% endblock canonical_url %}" />
 
-</head>
+    <!-- Structured Data (Schema.org) -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Person",
+        "name": "Hassan Zaki",
+        "jobTitle": "مدرب تطوير الذات",
+        "url": "{{ request.build_absolute_uri }}",
+        "image": "{% static 'images/hassan.jpg' %}",
+        "description": "مدرب متخصص في اكتشاف وتطوير الذات وتحسين العلاقات باعتماد من جامعه عين شمس.",
+        "alumniOf": "جامعة عين شمس",
+        "knowsAbout": ["تطوير الذات", "اكتشاف الذات", "تحسين العلاقات", "الكوتشينج", "الإرشاد النفسي"],
+        "sameAs": [
+          "https://www.linkedin.com/in/coach-hassanzaki-a80310343?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=ios_app",
+          "https://www.tiktok.com/@lifecoach_hassanzaki?_t=ZS-8sW3V3aYrTT&_r=1",
+          "https://www.youtube.com/@Lifecoach.hassanzaki",
+          "https://www.facebook.com/share/17z2hH4JWm/?mibextid=wwXIfr",
+          "https://www.instagram.com/lifecoach.hassanzaki/profilecard/?igsh=aDY3bWUzMHAyanA0",
+        ]
+      }
+    </script>
+  </head>
 
-<body class="">
+  <body class="">
     {% include "coaching/nav.html" %}
-    <div class="container mx-auto mt-4 overflow-hidden">
-        {% block content %}
-        {% endblock content %}
-    </div>
+    <div class="container mx-auto mt-4 overflow-hidden">{% block content %} {% endblock content %}</div>
     {% include "coaching/footer.html" %}
     <script src="https://cdn.jsdelivr.net/npm/flowbite@2.5.2/dist/flowbite.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowbite.min.js"></script>
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>
-      AOS.init({anchorPlacement: 'top', once:"true"});
+      AOS.init({ anchorPlacement: "top", once: "true" });
     </script>
-</body>
-
+  </body>
 </html>
