@@ -51,7 +51,7 @@
             <div class="max-w-sm rounded-lg border border-gray-200 bg-white shadow dark:border-gray-700 dark:bg-gray-800" data-aos="fade-up" data-aos-duration="1000">
                 {% if certification.image %}
                 <a href="#">
-                    <img class="h-64 w-full rounded-t-lg" src="{{ certification.image.url }}" alt="{{ certification.title }}" />
+                    <img class="w-full rounded-t-lg" src="{{ certification.image.url }}" alt="{{ certification.title }}" />
                 </a>
                 {% endif %}
                 <div class="{% if certification.title %}p-5{% else %}p-0{% endif %}">
