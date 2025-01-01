@@ -80,9 +80,9 @@ class HomePageContent(models.Model):
 
 
 class Certification(models.Model):
-    title = models.CharField(max_length=255)
-    subtitle = models.CharField(max_length=255, help_text="Source of the certification")
-    details = models.TextField()
+    title = models.TextField(default="", blank=True, null=True)
+    subtitle = models.TextField(help_text="Source of the certification", default="", blank=True, null=True)
+    details = models.TextField(default="", blank=True, null=True)
     image = models.ImageField(upload_to='certifications/', blank=True, null=True)
 
     def __str__(self):
