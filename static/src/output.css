@@ -1347,10 +1347,6 @@ input:checked + .toggle-bg {
   height: 1.5rem;
 }
 
-.h-64 {
-  height: 16rem;
-}
-
 .h-8 {
   height: 2rem;
 }
@@ -1379,8 +1375,56 @@ input:checked + .toggle-bg {
   height: 100vh;
 }
 
+.h-96 {
+  height: 24rem;
+}
+
+.h-lvh {
+  height: 100lvh;
+}
+
+.h-svh {
+  height: 100svh;
+}
+
+.h-\[400px\] {
+  height: 400px;
+}
+
+.h-\[500px\] {
+  height: 500px;
+}
+
 .max-h-full {
   max-height: 100%;
+}
+
+.max-h-svh {
+  max-height: 100svh;
+}
+
+.max-h-lvh {
+  max-height: 100lvh;
+}
+
+.max-h-\[500px\] {
+  max-height: 500px;
+}
+
+.min-h-screen {
+  min-height: 100vh;
+}
+
+.min-h-dvh {
+  min-height: 100dvh;
+}
+
+.min-h-\[500px\] {
+  min-height: 500px;
+}
+
+.min-h-96 {
+  min-height: 24rem;
 }
 
 .w-1\/2 {
@@ -1921,6 +1965,10 @@ input:checked + .toggle-bg {
   fill: currentColor;
 }
 
+.p-0 {
+  padding: 0px;
+}
+
 .p-1 {
   padding: 0.25rem;
 }
@@ -1947,10 +1995,6 @@ input:checked + .toggle-bg {
 
 .p-6 {
   padding: 1.5rem;
-}
-
-.p-0 {
-  padding: 0px;
 }
 
 .px-2 {

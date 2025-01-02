@@ -40,35 +40,6 @@
 <p>لا يوجد محتوى للصفحة الرئيسية</p>
 {% endif %}
 
-<section class="bg-white dark:bg-gray-900" id="certifications" dir="rtl">
-    <div class="mx-auto max-w-screen-xl px-4 py-8 lg:px-6 lg:py-16">
-        <div class="mx-auto mb-8 max-w-screen-md text-center lg:mb-12" data-aos="zoom-out-down" data-aos-duration="1000">
-            <h2 class="mb-4 text-4xl font-extrabold tracking-tight text-gray-900 dark:text-white">الشهادات</h2>
-            <h3 class="mb-4 text-2xl tracking-tight text-gray-500 dark:text-white">مسيرة من العلم والتطوير المستمر</h3>
-        </div>
-        <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {% for certification in certifications %}
-            <div class="max-w-sm rounded-lg border border-gray-200 bg-white shadow dark:border-gray-700 dark:bg-gray-800" data-aos="fade-up" data-aos-duration="1000">
-                {% if certification.image %}
-                <a href="#">
-                    <img class="w-full rounded-t-lg" src="{{ certification.image.url }}" alt="{{ certification.title }}" />
-                </a>
-                {% endif %}
-                <div class="{% if certification.title %}p-5{% else %}p-0{% endif %}">
-                    <a href="#">
-                        <h5 class="mb-0.5 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">{{ certification.title }}</h5>
-                    </a>
-                    <p class="mb-3 font-normal text-gray-700 dark:text-gray-400">{{ certification.subtitle }}</p>
-                    <p class="mb-3 font-normal text-gray-700 dark:text-gray-400">{{ certification.details }}</p>
-                </div>
-            </div>
-            {% empty %}
-            <p class="text-center text-gray-500 dark:text-gray-400">لم يتم اضافة شهادات بعد.</p>
-            {% endfor %}
-        </div>
-    </div>
-</section>
-
 <section class="bg-white dark:bg-gray-900" id="price" dir="rtl">
     <div class="mx-auto max-w-screen-xl px-4 py-8 lg:px-6 lg:py-16">
         <div class="mx-auto mb-8 max-w-screen-md text-center lg:mb-12" data-aos="zoom-out-down" data-aos-duration="1000">
@@ -115,6 +86,35 @@
                 <span class="absolute right-2 top-2 rounded-md bg-yellow-400 px-2 py-1 text-sm font-bold text-white">مميزة</span>
                 {% endif %}
             </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<section class="bg-white dark:bg-gray-900" id="certifications" dir="rtl">
+    <div class="mx-auto max-w-screen-xl px-4 py-8 lg:px-6 lg:py-16">
+        <div class="mx-auto mb-8 max-w-screen-md text-center lg:mb-12" data-aos="zoom-out-down" data-aos-duration="1000">
+            <h2 class="mb-4 text-4xl font-extrabold tracking-tight text-gray-900 dark:text-white">الشهادات</h2>
+            <h3 class="mb-4 text-2xl tracking-tight text-gray-500 dark:text-white">مسيرة من العلم والتطوير المستمر</h3>
+        </div>
+        <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {% for certification in certifications %}
+            <div class="max-w-sm rounded-lg border border-gray-200 bg-white shadow dark:border-gray-700 dark:bg-gray-800" data-aos="fade-up" data-aos-duration="1000">
+                {% if certification.image %}
+                <a href="#">
+                    <img class="max-h-[500px] w-full rounded-t-lg" src="{{ certification.image.url }}" alt="{{ certification.title }}" />
+                </a>
+                {% endif %}
+                <div class="{% if certification.title %}p-5{% else %}p-0{% endif %}">
+                    <a href="#">
+                        <h5 class="mb-0.5 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">{{ certification.title }}</h5>
+                    </a>
+                    <p class="mb-3 font-normal text-gray-700 dark:text-gray-400">{{ certification.subtitle }}</p>
+                    <p class="mb-3 font-normal text-gray-700 dark:text-gray-400">{{ certification.details }}</p>
+                </div>
+            </div>
+            {% empty %}
+            <p class="text-center text-gray-500 dark:text-gray-400">لم يتم اضافة شهادات بعد.</p>
             {% endfor %}
         </div>
     </div>
