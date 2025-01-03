@@ -1,7 +1,8 @@
 from django import forms
+from django.core.validators import validate_email, RegexValidator
 from .models import Certification, CoachingRequest, PricingPlan
+from django.utils import timezone as django_timezone
 from django.utils import timezone
-from django.core.exceptions import ValidationError
 import pytz
 
 
@@ -19,6 +20,7 @@ class CoachingRequestForm(forms.ModelForm):
         ),
         label="الوقت المتاح",
         help_text="اختر الوقت المناسب لك بناءً على المنطقة الزمنية المحددة.",
+        error_messages={'required': 'هذا الحقل مطلوب.', 'invalid_choice': 'الرجاء اختيار وقت متاح من القائمة.'}
     )
     timezone = forms.ChoiceField(
         choices=[(tz, tz) for tz in pytz.common_timezones],
@@ -30,6 +32,81 @@ class CoachingRequestForm(forms.ModelForm):
         ),
         label="المنطقة الزمنية",
         help_text="يرجى تحديد منطقتك الزمنية لتظهر لك الأوقات المتاحة بشكل صحيح.",
+        error_messages={'required': 'هذا الحقل مطلوب.', 'invalid_choice': 'الرجاء اختيار منطقة زمنية صحيحة.'}
+    )
+    scheduled_datetime = forms.DateField(
+        widget=forms.DateInput(
+            attrs={
+                "type": "date",
+                "class": "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500",
+                "placeholder": "اختر التاريخ",
+                "min": (django_timezone.now().date()).strftime("%Y-%m-%d"),
+            }
+        ),
+        label="التاريخ المقترح للجلسة",
+        help_text="اختر التاريخ المفضل لجلسة التدريب. سيتم عرض الأوقات المتاحة بعد اختيار التاريخ والمنطقة الزمنية.",
+        error_messages={'required': 'هذا الحقل مطلوب.', 'invalid': 'أدخل تاريخاً صحيحاً.'}
+    )
+    name = forms.CharField(
+        max_length=255,
+        widget=forms.TextInput(
+            attrs={
+                "class": "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500",
+                "placeholder": "أدخل اسمك كاملاً",
+            }
+        ),
+        label="اسمك بالكامل",
+        error_messages={'required': 'هذا الحقل مطلوب.'}
+    )
+    email = forms.EmailField(
+        widget=forms.EmailInput(
+            attrs={
+                "class": "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500",
+                "placeholder": "أدخل عنوان بريدك الإلكتروني (example@domain.com)",
+                "dir": "ltr",
+            }
+        ),
+        label="بريدك الإلكتروني",
+        validators=[validate_email],
+        error_messages={'required': 'هذا الحقل مطلوب.', 'invalid': 'أدخل عنوان بريد إلكتروني صحيح.'}
+    )
+    phone = forms.CharField(
+        max_length=17,
+        widget=forms.TextInput(
+            attrs={
+                "class": "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500",
+                "placeholder": "أدخل رقم هاتفك (مثال: 201234567890+)",
+                "dir": "ltr",
+            }
+        ),
+        label="رقم هاتفك للتواصل",
+        help_text="مثال: 2010XXXXXXXX+",
+        validators=[RegexValidator(
+            regex=r'^\+\d{9,15}$',
+            message="أدخل رقم الهاتف بالتنسيق الدولي: '+رمز الدولةرقم الهاتف'."
+        )],
+        error_messages={'required': 'هذا الحقل مطلوب.', 'invalid': 'أدخل رقم هاتف صحيح. رقم الهاتف بالتنسيق الدولي: +رمز الدولةرقم الهاتف'}
+    )
+    referral_source = forms.ChoiceField(
+        choices=CoachingRequest.REFERRAL_SOURCES,
+        widget=forms.Select(
+            attrs={
+                "class": "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+            }
+        ),
+        label="كيف سمعت عني؟",
+        error_messages={'required': 'هذا الحقل مطلوب.', 'invalid_choice': 'الرجاء اختيار مصدر صحيح.'}
+    )
+    details = forms.CharField(
+        required=False,
+        widget=forms.Textarea(
+            attrs={
+                "rows": "4",
+                "class": "block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500",
+                "placeholder": "شاركني بتفاصيل حول ما تأمل تحقيقه من الجلسة (اختياري)",
+            }
+        ),
+        label="رسالتك أو تفاصيل إضافية (اختياري)",
     )
 
     class Meta:
@@ -56,48 +133,6 @@ class CoachingRequestForm(forms.ModelForm):
             "phone": "مثال: 2010XXXXXXXX+",
             "scheduled_datetime": "اختر التاريخ المفضل لجلسة التدريب. سيتم عرض الأوقات المتاحة بعد اختيار التاريخ والمنطقة الزمنية.",
         }
-        widgets = {
-            "scheduled_datetime": forms.DateInput(
-                attrs={
-                    "type": "date",
-                    "class": "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500",
-                    "placeholder": "اختر التاريخ",
-                    "min": (timezone.now().date()).strftime("%Y-%m-%d"),
-                }
-            ),
-            "name": forms.TextInput(
-                attrs={
-                    "class": "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500",
-                    "placeholder": "أدخل اسمك كاملاً",
-                }
-            ),
-            "email": forms.EmailInput(
-                attrs={
-                    "class": "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500",
-                    "placeholder": "أدخل عنوان بريدك الإلكتروني (example@domain.com)",
-                    "dir": "ltr",
-                }
-            ),
-            "phone": forms.TextInput(
-                attrs={
-                    "class": "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500",
-                    "placeholder": "أدخل رقم هاتفك (مثال: 201234567890+)",
-                    "dir": "ltr",
-                }
-            ),
-            "referral_source": forms.Select(
-                attrs={
-                    "class": "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                }
-            ),
-            "details": forms.Textarea(
-                attrs={
-                    "rows": "4",
-                    "class": "block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500",
-                    "placeholder": "شاركني بتفاصيل حول ما تأمل تحقيقه من الجلسة (اختياري)",
-                }
-            ),
-        }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -121,10 +156,11 @@ class CoachingRequestForm(forms.ModelForm):
 
         # Handle Fridays and Saturdays
         if selected_date.weekday() == 4:  # Friday
-            return [("", "الجمعة غير متاح")]
+            return [("", "الجمعة غير متاح, الرجاء اختيار يوم اخر")]
 
         # Set start time based on the day
-        start_hour = 10 if selected_date.weekday() == 5 else 17  # 10 AM for Saturday, 5 PM for other days
+        start_hour = 10 if selected_date.weekday() == 5 else 17
+        end_hour = 18 if selected_date.weekday() == 5 else 23
 
         # Timezone Handling
         egypt_tz = pytz.timezone("Africa/Cairo")
@@ -138,7 +174,7 @@ class CoachingRequestForm(forms.ModelForm):
             timezone.datetime(selected_date.year, selected_date.month, selected_date.day, start_hour, 0)
         )
         end_time = egypt_tz.localize(
-            timezone.datetime(selected_date.year, selected_date.month, selected_date.day, 18 if selected_date.weekday() == 5 else 23, 0)
+            timezone.datetime(selected_date.year, selected_date.month, selected_date.day, end_hour, 0)
         )
 
         # Filter out past times (always use Egypt time for comparison)
