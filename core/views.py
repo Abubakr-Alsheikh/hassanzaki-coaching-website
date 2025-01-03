@@ -1,18 +1,17 @@
-import datetime
 from django.forms import ValidationError
-from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, render, redirect
 from django.core.mail import send_mail
-from django.conf import settings  # Import settings for email configuration
+from django.conf import settings
 from django.contrib import messages
 from django.template.loader import render_to_string
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required
 import pytz
-
+import logging
 from .models import Certification, CoachingRequest, HomePageContent, PricingPlan
 from .forms import CertificationForm, CoachingRequestForm, PricingPlanForm
 
+logger = logging.getLogger(__name__)
 
 def index(request):
     plans = PricingPlan.objects.all()
@@ -65,7 +64,7 @@ def coaching_request_view(request, plan_id):
             ).exists()
 
             if is_double_booked:
-                messages.error(request, "This time slot has already been booked. Please choose another time.")
+                messages.error(request, "لقد تم حجز هذه الفترة الزمنية بالفعل. يرجى اختيار وقت آخر.")
                 return render(request, "coaching/coaching_request_form.html", {"form": form, "plan": plan})
 
             coaching_request.save()
@@ -124,6 +123,8 @@ def coaching_request_view(request, plan_id):
             )
             return redirect("coaching:index")
         else:
+            logger.error(f"Form is invalid. Errors: {form.errors}")
+
             for field, errors in form.errors.items():
                 for error in errors:
                     messages.error(request, f"{form.fields[field].label}: {error}")
