@@ -69,53 +69,53 @@ def coaching_request_view(request, plan_id):
 
             coaching_request.save()
 
-            user_email = form.cleaned_data["email"]
-            user_name = form.cleaned_data["name"]
+            # user_email = form.cleaned_data["email"]
+            # user_name = form.cleaned_data["name"]
 
-            # User email context (in user's timezone)
-            context = {
-                "name": user_name,
-                "scheduled_date": user_datetime.strftime("%Y-%m-%d"),
-                "scheduled_time": user_datetime.strftime("%I:%M %p"),
-                "plan_name": plan.name,
-            }
-            subject = "تأكيد طلب الاستشارة التدريبية الخاص بك"
-            html_message = render_to_string(
-                "coaching/emails/coaching_request_confirmation.html", context
-            )
-            send_mail(
-                subject,
-                "",
-                settings.DEFAULT_FROM_EMAIL,
-                [user_email],
-                html_message=html_message,
-                fail_silently=False,
-            )
+            # # User email context (in user's timezone)
+            # context = {
+            #     "name": user_name,
+            #     "scheduled_date": user_datetime.strftime("%Y-%m-%d"),
+            #     "scheduled_time": user_datetime.strftime("%I:%M %p"),
+            #     "plan_name": plan.name,
+            # }
+            # subject = "تأكيد طلب الاستشارة التدريبية الخاص بك"
+            # html_message = render_to_string(
+            #     "coaching/emails/coaching_request_confirmation.html", context
+            # )
+            # send_mail(
+            #     subject,
+            #     "",
+            #     settings.DEFAULT_FROM_EMAIL,
+            #     [user_email],
+            #     html_message=html_message,
+            #     fail_silently=False,
+            # )
 
-            # Admin email context (in default/Egypt timezone)
-            admin_email = settings.ADMIN_EMAIL
-            admin_context = {
-                "name": user_name,
-                "phone": form.cleaned_data["phone"],
-                "email": user_email,
-                "scheduled_date": localized_datetime.strftime("%Y-%m-%d"),
-                "scheduled_time": localized_datetime.strftime("%I:%M %p"),
-                "timezone": user_timezone,
-                "details": form.cleaned_data["details"],
-                "plan_name": plan.name,
-            }
-            admin_subject = f"طلب استشارة تدريبية جديد من {user_name}"
-            admin_html_message = render_to_string(
-                "coaching/emails/new_coaching_request_notification.html", admin_context
-            )
-            send_mail(
-                admin_subject,
-                "",
-                settings.DEFAULT_FROM_EMAIL,
-                [admin_email],
-                html_message=admin_html_message,
-                fail_silently=False,
-            )
+            # # Admin email context (in default/Egypt timezone)
+            # admin_email = settings.ADMIN_EMAIL
+            # admin_context = {
+            #     "name": user_name,
+            #     "phone": form.cleaned_data["phone"],
+            #     "email": user_email,
+            #     "scheduled_date": localized_datetime.strftime("%Y-%m-%d"),
+            #     "scheduled_time": localized_datetime.strftime("%I:%M %p"),
+            #     "timezone": user_timezone,
+            #     "details": form.cleaned_data["details"],
+            #     "plan_name": plan.name,
+            # }
+            # admin_subject = f"طلب استشارة تدريبية جديد من {user_name}"
+            # admin_html_message = render_to_string(
+            #     "coaching/emails/new_coaching_request_notification.html", admin_context
+            # )
+            # send_mail(
+            #     admin_subject,
+            #     "",
+            #     settings.DEFAULT_FROM_EMAIL,
+            #     [admin_email],
+            #     html_message=admin_html_message,
+            #     fail_silently=False,
+            # )
 
             messages.success(
                 request,
