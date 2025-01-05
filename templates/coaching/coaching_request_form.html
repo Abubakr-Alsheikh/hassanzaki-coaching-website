@@ -24,12 +24,12 @@
             </div>
         {% endif %}
 
-        <form method="post" class="rtl:text-right">
+        <form method="post" class="rtl:text-right" novalidate>
             {% csrf_token %}
             <div class="grid gap-4 sm:grid-cols-2 sm:gap-6">
                 {% for field in form %}
-                    <div class="sm:col-span-2 {% if field.name == "plan" %}hidden{% endif %}" {% if field.name in form.Meta.field_classes %}class="{{ form.Meta.field_classes.scheduled_datetime }}"{% endif %} data-aos="fade-up" data-aos-delay="{{ forloop.counter0|calculate_aos_delay }}" data-aos-duration="800">
-                        <label class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">
+                    <div class="sm:col-span-2 {% if field.name == "plan" %}hidden{% endif %}" data-aos="fade-up" data-aos-delay="{{ forloop.counter0|calculate_aos_delay }}" data-aos-duration="800">
+                        <label class="mb-2 block text-sm font-medium text-gray-900 dark:text-white" for="{{ field.id_for_label }}">
                             {{ field.label }}
                             {% if field.help_text %}
                                 <span class="ml-2 text-xs text-gray-500" data-tooltip-target="tooltip-{{ field.name }}" data-tooltip-placement="bottom">
@@ -57,7 +57,7 @@
 </section>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
+    document.addEventListener('DOMContentLoaded', function() {
         const dateInput = document.getElementById('id_scheduled_datetime');
         const timezoneSelect = document.getElementById('id_timezone');
         const availableTimesSelect = document.getElementById('id_available_times');
@@ -72,7 +72,11 @@
         }
 
         function updateAvailableTimes() {
-            availableTimesSelect.disabled = true; // Disable the select dropdown
+            availableTimesSelect.disabled = true; 
+            
+            // Show a loading message or spinner
+            availableTimesSelect.innerHTML = '<option>جاري التحميل...</option>'; 
+
             const selectedDate = dateInput.value;
             const selectedTimezone = timezoneSelect.value;
 
@@ -93,20 +97,119 @@
                 const newAvailableTimesSelect = doc.getElementById('id_available_times');
                 if (newAvailableTimesSelect) {
                     availableTimesSelect.innerHTML = newAvailableTimesSelect.innerHTML;
-                    availableTimesSelect.disabled = false; // Re-enable after updating
                 } else {
                     console.error('Error: Could not find the available times select element in the response.');
-                    availableTimesSelect.disabled = false;
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
+            })
+            .finally(() => {
                 availableTimesSelect.disabled = false; // Re-enable even on error
             });
         }
 
         dateInput.addEventListener('change', updateAvailableTimes);
         timezoneSelect.addEventListener('change', updateAvailableTimes);
+
+        // Form Validation
+        formElement.addEventListener('submit', function(event) {
+            let isValid = true;
+
+            // Validation for Name
+            const nameInput = document.getElementById('id_name');
+            if (nameInput.value.trim() === '') {
+                displayError(nameInput, 'هذا الحقل مطلوب.');
+                isValid = false;
+            } else {
+                clearError(nameInput);
+            }
+
+            // Validation for Email
+            const emailInput = document.getElementById('id_email');
+            if (!validateEmail(emailInput.value)) {
+                displayError(emailInput, 'أدخل عنوان بريد إلكتروني صحيح.');
+                isValid = false;
+            } else {
+                clearError(emailInput);
+            }
+
+            // Validation for Phone Number
+            const phoneInput = document.getElementById('id_phone');
+            const phoneRegex = /^\+\d{9,15}$/; 
+            if (!phoneRegex.test(phoneInput.value)) {
+                displayError(phoneInput, "أدخل رقم الهاتف بالتنسيق الدولي: '+رمز الدولةرقم الهاتف'.");
+                isValid = false;
+            } else {
+                clearError(phoneInput);
+            }
+
+            // Validation for Referral Source
+            const referralSourceSelect = document.getElementById('id_referral_source');
+            if (referralSourceSelect.value === '') {
+                displayError(referralSourceSelect, 'هذا الحقل مطلوب.');
+                isValid = false;
+            } else {
+                clearError(referralSourceSelect);
+            }
+
+            // Validation for Scheduled Date
+            const dateInput = document.getElementById('id_scheduled_datetime');
+            if (dateInput.value === '') {
+                displayError(dateInput, 'هذا الحقل مطلوب.');
+                isValid = false;
+            } else {
+                clearError(dateInput);
+            }
+
+            // Validation for Timezone
+            const timezoneSelect = document.getElementById('id_timezone');
+            if (timezoneSelect.value === '') {
+                displayError(timezoneSelect, 'هذا الحقل مطلوب.');
+                isValid = false;
+            } else {
+                clearError(timezoneSelect);
+            }
+
+            // Validation for Available Times
+            const availableTimesSelect = document.getElementById('id_available_times');
+            if (availableTimesSelect.value === '') {
+                displayError(availableTimesSelect, 'الرجاء اختيار وقت متاح من القائمة.');
+                isValid = false;
+            } else {
+                clearError(availableTimesSelect);
+            }
+
+            if (!isValid) {
+                event.preventDefault(); // Prevent form submission
+            }
+        });
+
+        // Helper function to display error messages
+        function displayError(inputField, message) {
+            let errorSpan = inputField.parentNode.querySelector('.error-message');
+            if (!errorSpan) {
+                errorSpan = document.createElement('span');
+                errorSpan.classList.add('error-message');
+                errorSpan.style.color = 'red';
+                inputField.parentNode.appendChild(errorSpan);
+            }
+            errorSpan.textContent = message;
+        }
+
+        // Helper function to clear error messages
+        function clearError(inputField) {
+            const errorSpan = inputField.parentNode.querySelector('.error-message');
+            if (errorSpan) {
+                errorSpan.remove();
+            }
+        }
+
+        // Helper function to validate email format
+        function validateEmail(email) {
+            const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+            return re.test(String(email).toLowerCase());
+        }
     });
 </script>
 {% endblock content %}
