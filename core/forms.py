@@ -20,7 +20,7 @@ class CoachingRequestForm(forms.ModelForm):
         ),
         label="الوقت المتاح",
         help_text="اختر الوقت المناسب لك بناءً على المنطقة الزمنية المحددة.",
-        error_messages={'required': 'هذا الحقل مطلوب.', 'invalid_choice': 'الرجاء اختيار وقت متاح من القائمة.'}
+        error_messages={'required': 'هذا الحقل مطلوب.', 'invalid_choice': 'نعتذر من الخطاء. الرجاء اختيار وقت متاح من القائمة مرة اخرى.'}
     )
     timezone = forms.ChoiceField(
         choices=[(tz, tz) for tz in pytz.common_timezones],
