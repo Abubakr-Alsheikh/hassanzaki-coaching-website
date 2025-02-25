@@ -27,7 +27,7 @@
       </div>
       <div class="mb-4">
         <label class="mb-2 block text-sm font-bold text-gray-700" for="discounted_price"> السعر الجديد (الخصم) </label>
-        <input class="focus:shadow-outline w-full appearance-none rounded border px-3 py-2 leading-tight text-gray-700 shadow focus:outline-none" id="discounted_price" name="discounted_price" type="text" placeholder="السعر الجديد" value="{{ plan.discounted_price }}" />
+        <input class="focus:shadow-outline w-full appearance-none rounded border px-3 py-2 leading-tight text-gray-700 shadow focus:outline-none" id="discounted_price" name="discounted_price" type="text" placeholder="السعر الجديد" value="{% if plan.discounted_price %}{{ plan.discounted_price }}{% endif %}" />
       </div>
       <div class="mb-4">
         <label class="mb-2 block text-sm font-bold text-gray-700" for="sessions"> عدد الجلسات </label>
