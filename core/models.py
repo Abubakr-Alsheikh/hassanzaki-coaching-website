@@ -55,7 +55,7 @@ class PricingPlan(models.Model):
             savings = price_num - discounted_price_num
 
             if savings > 0:
-                return f"{price_currency}{savings}"  # Or any format you prefer
+                return f"{savings} {price_currency}"  # Or any format you prefer
             else:
                 return ""  # Handle cases where discounted_price might be higher
         except ValueError:
