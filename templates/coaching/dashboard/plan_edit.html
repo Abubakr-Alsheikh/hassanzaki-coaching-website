@@ -1,72 +1,48 @@
-{% extends "coaching/dashboard/_dashboard.html" %}
-{% block extra_content %}
-    <div class="container mx-auto mt-10">
-        <div class="mb-4 rounded bg-white px-8 pb-8 pt-6 shadow-md">
-            <h2 class="mb-6 text-2xl font-bold">تعديل الخطة التدريبية</h2>
-            {% if form.errors %}
-                <div class="relative mb-4 rounded border border-red-400 bg-red-100 px-4 py-3 text-red-700" role="alert">
-                    <strong class="font-bold">خطأ!</strong>
-                {% for field, errors in form.errors.items %}
-                    {% for error in errors %}
-                        <span class="block sm:inline">{{ error }}</span>
-                    {% endfor %}
-                {% endfor %}
-                </div>
-            {% endif %}
-
-            <form method="post">
-                {% csrf_token %}
-                <div class="mb-4">
-                    <label class="mb-2 block text-sm font-bold text-gray-700" for="name">
-                        اسم الخطة
-                    </label>
-                    <input class="focus:shadow-outline w-full appearance-none rounded border px-3 py-2 leading-tight text-gray-700 shadow focus:outline-none"
-                           id="name" name="name" type="text" placeholder="اسم الخطة" value="{{ plan.name }}" required>
-                </div>
-                <div class="mb-4">
-                    <label class="mb-2 block text-sm font-bold text-gray-700" for="description">
-                        الوصف
-                    </label>
-                    <textarea class="focus:shadow-outline w-full appearance-none rounded border px-3 py-2 leading-tight text-gray-700 shadow focus:outline-none"
-                           id="description" name="description" placeholder="الوصف" rows="4" required>{{ plan.description }}</textarea>
-                </div>
-               <div class="mb-4">
-                    <label class="mb-2 block text-sm font-bold text-gray-700" for="price">
-                        السعر القديم
-                    </label>
-                    <input class="focus:shadow-outline w-full appearance-none rounded border px-3 py-2 leading-tight text-gray-700 shadow focus:outline-none"
-                           id="price" name="price" type="number" step="0.01" placeholder="السعر" value="{{ plan.price }}" required>
-                </div>
-                <div class="mb-4">
-                     <label class="mb-2 block text-sm font-bold text-gray-700" for="discounted_price">
-                        السعر الجديد (الخصم)
-                    </label>
-                    <input class="focus:shadow-outline w-full appearance-none rounded border px-3 py-2 leading-tight text-gray-700 shadow focus:outline-none"
-                           id="discounted_price" name="discounted_price" type="number" step="0.01" placeholder="السعر الجديد"  value="{{ plan.discounted_price }}">
-                </div>
-                  <div class="mb-4">
-                    <label class="mb-2 block text-sm font-bold text-gray-700" for="sessions">
-                        عدد الجلسات
-                    </label>
-                    <input class="focus:shadow-outline w-full appearance-none rounded border px-3 py-2 leading-tight text-gray-700 shadow focus:outline-none"
-                           id="sessions" name="sessions" type="number" placeholder="عدد الجلسات" value="{{ plan.sessions }}" required>
-                </div>
-                <div class="mb-4">
-                    <label class="mb-2 block text-sm font-bold text-gray-700" for="featured">
-                         مميزة؟
-                    </label>
-                     <input type="checkbox" class="h-4 w-4 rounded border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-blue-600" id="featured" name="featured" {% if plan.featured %} checked {% endif %}>
-                 </div>
-
-
-                <div class="flex items-center justify-between">
-                    <button class="focus:shadow-outline rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700 focus:outline-none"
-                            type="submit">
-                        تعديل
-                    </button>
-                      <a href="{% url 'coaching:plan_list' %}" class="focus:shadow-outline ms-2 rounded bg-gray-500 px-4 py-2 font-bold text-white hover:bg-gray-700 focus:outline-none">إلغاء</a>
-                </div>
-            </form>
-        </div>
+{% extends "coaching/dashboard/_dashboard.html" %} {% block extra_content %}
+<div class="container mx-auto mt-10">
+  <div class="mb-4 rounded bg-white px-8 pb-8 pt-6 shadow-md">
+    <h2 class="mb-6 text-2xl font-bold">تعديل الخطة التدريبية</h2>
+    {% if form.errors %}
+    <div class="relative mb-4 rounded border border-red-400 bg-red-100 px-4 py-3 text-red-700" role="alert">
+      <strong class="font-bold">خطأ!</strong>
+      {% for field, errors in form.errors.items %} {% for error in errors %}
+      <span class="block sm:inline">{{ error }}</span>
+      {% endfor %} {% endfor %}
     </div>
+    {% endif %}
+
+    <form method="post">
+      {% csrf_token %}
+      <div class="mb-4">
+        <label class="mb-2 block text-sm font-bold text-gray-700" for="name"> اسم الخطة </label>
+        <input class="focus:shadow-outline w-full appearance-none rounded border px-3 py-2 leading-tight text-gray-700 shadow focus:outline-none" id="name" name="name" type="text" placeholder="اسم الخطة" value="{{ plan.name }}" required />
+      </div>
+      <div class="mb-4">
+        <label class="mb-2 block text-sm font-bold text-gray-700" for="description"> الوصف </label>
+        <textarea class="focus:shadow-outline w-full appearance-none rounded border px-3 py-2 leading-tight text-gray-700 shadow focus:outline-none" id="description" name="description" placeholder="الوصف" rows="4" required>{{ plan.description }}</textarea>
+      </div>
+      <div class="mb-4">
+        <label class="mb-2 block text-sm font-bold text-gray-700" for="price"> السعر القديم </label>
+        <input class="focus:shadow-outline w-full appearance-none rounded border px-3 py-2 leading-tight text-gray-700 shadow focus:outline-none" id="price" name="price" type="text" placeholder="السعر" value="{{ plan.price }}" required />
+      </div>
+      <div class="mb-4">
+        <label class="mb-2 block text-sm font-bold text-gray-700" for="discounted_price"> السعر الجديد (الخصم) </label>
+        <input class="focus:shadow-outline w-full appearance-none rounded border px-3 py-2 leading-tight text-gray-700 shadow focus:outline-none" id="discounted_price" name="discounted_price" type="text" placeholder="السعر الجديد" value="{{ plan.discounted_price }}" />
+      </div>
+      <div class="mb-4">
+        <label class="mb-2 block text-sm font-bold text-gray-700" for="sessions"> عدد الجلسات </label>
+        <input class="focus:shadow-outline w-full appearance-none rounded border px-3 py-2 leading-tight text-gray-700 shadow focus:outline-none" id="sessions" name="sessions" type="number" placeholder="عدد الجلسات" value="{{ plan.sessions }}" required />
+      </div>
+      <div class="mb-4">
+        <label class="mb-2 block text-sm font-bold text-gray-700" for="featured"> مميزة؟ </label>
+        <input type="checkbox" class="h-4 w-4 rounded border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-blue-600" id="featured" name="featured" {% if plan.featured %} checked {% endif %} />
+      </div>
+
+      <div class="flex items-center justify-between">
+        <button class="focus:shadow-outline rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700 focus:outline-none" type="submit">تعديل</button>
+        <a href="{% url 'coaching:plan_list' %}" class="focus:shadow-outline ms-2 rounded bg-gray-500 px-4 py-2 font-bold text-white hover:bg-gray-700 focus:outline-none">إلغاء</a>
+      </div>
+    </form>
+  </div>
+</div>
 {% endblock %}

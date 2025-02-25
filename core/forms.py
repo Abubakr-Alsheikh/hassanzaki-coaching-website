@@ -20,7 +20,10 @@ class CoachingRequestForm(forms.ModelForm):
         ),
         label="الوقت المتاح",
         help_text="اختر الوقت المناسب لك بناءً على المنطقة الزمنية المحددة.",
-        error_messages={'required': 'هذا الحقل مطلوب.', 'invalid_choice': 'نعتذر من الخطاء. الرجاء اختيار وقت متاح من القائمة مرة اخرى.'}
+        error_messages={
+            "required": "هذا الحقل مطلوب.",
+            "invalid_choice": "نعتذر من الخطاء. الرجاء اختيار وقت متاح من القائمة مرة اخرى.",
+        },
     )
     timezone = forms.ChoiceField(
         choices=[(tz, tz) for tz in pytz.common_timezones],
@@ -32,7 +35,10 @@ class CoachingRequestForm(forms.ModelForm):
         ),
         label="المنطقة الزمنية",
         help_text="يرجى تحديد منطقتك الزمنية لتظهر لك الأوقات المتاحة بشكل صحيح.",
-        error_messages={'required': 'هذا الحقل مطلوب.', 'invalid_choice': 'الرجاء اختيار منطقة زمنية صحيحة.'}
+        error_messages={
+            "required": "هذا الحقل مطلوب.",
+            "invalid_choice": "الرجاء اختيار منطقة زمنية صحيحة.",
+        },
     )
     scheduled_datetime = forms.DateField(
         widget=forms.DateInput(
@@ -45,7 +51,10 @@ class CoachingRequestForm(forms.ModelForm):
         ),
         label="التاريخ المقترح للجلسة",
         help_text="اختر التاريخ المفضل لجلسة التدريب. سيتم عرض الأوقات المتاحة بعد اختيار التاريخ والمنطقة الزمنية.",
-        error_messages={'required': 'هذا الحقل مطلوب.', 'invalid': 'أدخل تاريخاً صحيحاً.'}
+        error_messages={
+            "required": "هذا الحقل مطلوب.",
+            "invalid": "أدخل تاريخاً صحيحاً.",
+        },
     )
     name = forms.CharField(
         max_length=255,
@@ -56,7 +65,7 @@ class CoachingRequestForm(forms.ModelForm):
             }
         ),
         label="اسمك بالكامل",
-        error_messages={'required': 'هذا الحقل مطلوب.'}
+        error_messages={"required": "هذا الحقل مطلوب."},
     )
     email = forms.EmailField(
         widget=forms.EmailInput(
@@ -68,7 +77,10 @@ class CoachingRequestForm(forms.ModelForm):
         ),
         label="بريدك الإلكتروني",
         validators=[validate_email],
-        error_messages={'required': 'هذا الحقل مطلوب.', 'invalid': 'أدخل عنوان بريد إلكتروني صحيح.'}
+        error_messages={
+            "required": "هذا الحقل مطلوب.",
+            "invalid": "أدخل عنوان بريد إلكتروني صحيح.",
+        },
     )
     phone = forms.CharField(
         max_length=17,
@@ -81,11 +93,16 @@ class CoachingRequestForm(forms.ModelForm):
         ),
         label="رقم هاتفك للتواصل",
         help_text="مثال: 2010XXXXXXXX+",
-        validators=[RegexValidator(
-            regex=r'^\+\d{9,15}$',
-            message="أدخل رقم الهاتف بالتنسيق الدولي: '+رمز الدولةرقم الهاتف'."
-        )],
-        error_messages={'required': 'هذا الحقل مطلوب.', 'invalid': 'أدخل رقم هاتف صحيح. رقم الهاتف بالتنسيق الدولي: +رمز الدولةرقم الهاتف'}
+        validators=[
+            RegexValidator(
+                regex=r"^\+\d{9,15}$",
+                message="أدخل رقم الهاتف بالتنسيق الدولي: '+رمز الدولةرقم الهاتف'.",
+            )
+        ],
+        error_messages={
+            "required": "هذا الحقل مطلوب.",
+            "invalid": "أدخل رقم هاتف صحيح. رقم الهاتف بالتنسيق الدولي: +رمز الدولةرقم الهاتف",
+        },
     )
     referral_source = forms.ChoiceField(
         choices=CoachingRequest.REFERRAL_SOURCES,
@@ -95,7 +112,10 @@ class CoachingRequestForm(forms.ModelForm):
             }
         ),
         label="كيف سمعت عني؟",
-        error_messages={'required': 'هذا الحقل مطلوب.', 'invalid_choice': 'الرجاء اختيار مصدر صحيح.'}
+        error_messages={
+            "required": "هذا الحقل مطلوب.",
+            "invalid_choice": "الرجاء اختيار مصدر صحيح.",
+        },
     )
     details = forms.CharField(
         required=False,
@@ -138,19 +158,27 @@ class CoachingRequestForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         if "scheduled_datetime" not in self.data:
             initial_date = timezone.now().date()
-            if 'scheduled_datetime' not in self.initial:  # Prevent overwriting initial data
+            if (
+                "scheduled_datetime" not in self.initial
+            ):  # Prevent overwriting initial data
                 self.initial["scheduled_datetime"] = initial_date.strftime("%Y-%m-%d")
         self.fields["available_times"].choices = self.get_available_time_choices()
 
     def get_available_time_choices(self):
-        selected_date_str = self.data.get("scheduled_datetime") or self.initial.get("scheduled_datetime")
-        selected_timezone_str = self.data.get("timezone") or self.initial.get("timezone")
+        selected_date_str = self.data.get("scheduled_datetime") or self.initial.get(
+            "scheduled_datetime"
+        )
+        selected_timezone_str = self.data.get("timezone") or self.initial.get(
+            "timezone"
+        )
 
         if not selected_date_str:
             return []
 
         try:
-            selected_date = timezone.datetime.strptime(selected_date_str, "%Y-%m-%d").date()
+            selected_date = timezone.datetime.strptime(
+                selected_date_str, "%Y-%m-%d"
+            ).date()
         except (ValueError, TypeError):
             return []
 
@@ -165,23 +193,37 @@ class CoachingRequestForm(forms.ModelForm):
         # Timezone Handling
         egypt_tz = pytz.timezone("Africa/Cairo")
         try:
-            user_tz = pytz.timezone(selected_timezone_str) if selected_timezone_str else egypt_tz
+            user_tz = (
+                pytz.timezone(selected_timezone_str)
+                if selected_timezone_str
+                else egypt_tz
+            )
         except pytz.exceptions.UnknownTimeZoneError:
             user_tz = egypt_tz
 
         # Define start and end times (timezone-aware)
         start_time = egypt_tz.localize(
-            timezone.datetime(selected_date.year, selected_date.month, selected_date.day, start_hour, 0)
+            timezone.datetime(
+                selected_date.year,
+                selected_date.month,
+                selected_date.day,
+                start_hour,
+                0,
+            )
         )
         end_time = egypt_tz.localize(
-            timezone.datetime(selected_date.year, selected_date.month, selected_date.day, end_hour, 0)
+            timezone.datetime(
+                selected_date.year, selected_date.month, selected_date.day, end_hour, 0
+            )
         )
 
         # Filter out past times (always use Egypt time for comparison)
         now_egypt_tz = timezone.now().astimezone(egypt_tz)
         if start_time < now_egypt_tz:
             # Adjust start_time to the next full hour in Egypt time
-            start_time = now_egypt_tz.replace(minute=0, second=0, microsecond=0) + timezone.timedelta(hours=1)
+            start_time = now_egypt_tz.replace(
+                minute=0, second=0, microsecond=0
+            ) + timezone.timedelta(hours=1)
 
         # Create time slots
         time_slots = []
@@ -197,7 +239,9 @@ class CoachingRequestForm(forms.ModelForm):
             scheduled_datetime__date=selected_date
         ).values_list("scheduled_datetime", flat=True)
 
-        unavailable_times_str = [time.astimezone(egypt_tz).strftime("%H:%M") for time in unavailable_times]
+        unavailable_times_str = [
+            time.astimezone(egypt_tz).strftime("%H:%M") for time in unavailable_times
+        ]
         available_time_slots = [
             slot for slot in time_slots if slot[0] not in unavailable_times_str
         ]
@@ -225,29 +269,17 @@ class PricingPlanForm(forms.ModelForm):
         if price is None:
             raise forms.ValidationError("هذا الحقل مطلوب.")
         return price
-        
+
     def clean_sessions(self):
         sessions = self.cleaned_data.get("sessions")
         if sessions is None:
             raise forms.ValidationError("هذا الحقل مطلوب.")
         if sessions <= 0:
-            raise forms.ValidationError(
-                "يجب أن يكون عدد الجلسات أكبر من صفر."
-            )
+            raise forms.ValidationError("يجب أن يكون عدد الجلسات أكبر من صفر.")
         return sessions
-    
-    def clean(self):
-        cleaned_data = super().clean()
-        discounted_price = cleaned_data.get('discounted_price')
-        price = cleaned_data.get('price')
-        
-        if discounted_price is not None and price is not None:
-          if discounted_price >= price:
-            self.add_error('discounted_price', "يجب أن يكون السعر الجديد أقل من السعر الأصلي.")
-        return cleaned_data
 
 
 class CertificationForm(forms.ModelForm):
     class Meta:
         model = Certification
-        fields = ['title', 'subtitle', 'details', 'image']
+        fields = ["title", "subtitle", "details", "image"]
