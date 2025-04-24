@@ -81,6 +81,24 @@
       html {
         scroll-behavior: smooth;
       }
+      .float {
+        position: fixed;
+        width: 60px;
+        height: 60px;
+        bottom: 40px;
+        right: 40px;
+        background-color: #25d366;
+        color: #fff;
+        border-radius: 50px;
+        text-align: center;
+        font-size: 30px;
+        box-shadow: 2px 2px 3px #999;
+        z-index: 100;
+      }
+
+      .my-float {
+        margin-top: 16px;
+      }
     </style>
     <!-- Canonical URL -->
     <link rel="canonical" href="{% block canonical_url %}{{ request.build_absolute_uri }}{% endblock canonical_url %}" />
@@ -106,6 +124,9 @@
     {% include "coaching/nav.html" %}
     <div class="container mx-auto mt-4 overflow-hidden">{% block content %} {% endblock content %}</div>
     {% include "coaching/footer.html" %}
+    <a href="https://api.whatsapp.com/send?phone=2001007483683" class="float" target="_blank">
+      <i class="fab fa-whatsapp my-float"></i>
+    </a>
     <script src="https://cdn.jsdelivr.net/npm/flowbite@2.5.2/dist/flowbite.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowbite.min.js"></script>
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>

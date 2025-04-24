@@ -78,7 +78,9 @@ class CoachingRequest(models.Model):
     scheduled_datetime = models.DateTimeField("Date and Time", default=timezone.now)
     details = models.TextField("Details", blank=True, null=True)
     name = models.CharField("Name", max_length=255)
-    email = models.EmailField("Email", validators=[validate_email])
+    email = models.EmailField(
+        "Email", validators=[validate_email], blank=True, null=True
+    )
 
     phone_regex = RegexValidator(
         regex=r"^\+\d{9,15}$",

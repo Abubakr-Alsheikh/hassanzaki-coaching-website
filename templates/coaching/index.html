@@ -17,6 +17,7 @@
 <section class="rounded-3xl bg-gray-50 px-4 py-8 antialiased dark:bg-gray-900 md:py-16" id="about" dir="rtl" data-aos="zoom-out-up" data-aos-duration="1000">
   <div class="mx-auto mb-5 max-w-screen-md text-center" data-aos="fade-up" data-aos-duration="1000">
     <h2 class="mb-4 text-4xl font-extrabold tracking-tight text-gray-900 dark:text-white">رحلتى</h2>
+    <hr class="mx-auto my-4 h-1 w-48 rounded-sm border-0 bg-primary-400 dark:bg-primary-700" />
     <h3 class="mb-4 text-2xl tracking-tight text-gray-500 dark:text-white">نحو تطوير الذات واكتشاف القدرات الكامنه</h3>
   </div>
   <div class="mx-auto grid max-w-screen-xl bg-gray-50 p-4 dark:bg-gray-800 md:p-4 lg:grid-cols-12 lg:gap-8 lg:p-8 xl:gap-16 rtl:flex-row-reverse">
@@ -39,7 +40,20 @@
   <div class="mx-auto max-w-screen-xl px-4 py-8 lg:px-6 lg:py-16">
     <div class="mx-auto mb-8 max-w-screen-md text-center lg:mb-12" data-aos="zoom-out-down" data-aos-duration="1000">
       <h2 class="mb-4 text-4xl font-extrabold tracking-tight text-gray-900 dark:text-white">خطط التدريب</h2>
+      <hr class="mx-auto my-4 h-1 w-48 rounded-sm border-0 bg-primary-400 dark:bg-primary-700" />
       <h3 class="mb-4 text-2xl tracking-tight text-gray-500 dark:text-white">اختر الخطة التي تناسب احتياجاتك وأهدافك</h3>
+      <div class="flex justify-center space-x-4">
+        <img src="{% static "images/visa.png" %}" class="h-10 w-auto" />
+        <!-- Changed max-h-4 to h-10 w-auto -->
+        <img src="{% static "images/mastercard.png" %}" class="h-10 w-auto" />
+        <!-- Changed max-h-4 to h-10 w-auto -->
+        <img src="{% static "images/instapay.png" %}" class="h-10 w-auto" />
+        <!-- Changed max-h-4 to h-10 w-auto -->
+        <img src="{% static "images/iban.png" %}" class="h-10 w-auto" />
+        <!-- Changed max-h-4 to h-10 w-auto -->
+        <img src="{% static "images/vodaphone.png" %}" class="h-10 w-auto" />
+        <!-- Changed max-h-4 to h-10 w-auto -->
+      </div>
     </div>
     <div class="space-y-8 sm:gap-6 lg:grid lg:grid-cols-4 lg:space-y-0 xl:gap-10">
       {% for plan in plans %}
@@ -87,9 +101,10 @@
   <div class="mx-auto max-w-screen-xl px-4 py-8 lg:px-6 lg:py-16">
     <div class="mx-auto mb-8 max-w-screen-md text-center lg:mb-12" data-aos="zoom-out-down" data-aos-duration="1000">
       <h2 class="mb-4 text-4xl font-extrabold tracking-tight text-gray-900 dark:text-white">الشهادات</h2>
+      <hr class="mx-auto my-4 h-1 w-48 rounded-sm border-0 bg-primary-400 dark:bg-primary-700" />
       <h3 class="mb-4 text-2xl tracking-tight text-gray-500 dark:text-white">مسيرة من العلم والتطوير المستمر</h3>
     </div>
-    <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+    <div class="grid justify-center gap-6 md:grid-cols-2 lg:grid-cols-3">
       {% for certification in certifications %}
       <div class="max-w-sm rounded-lg border border-gray-200 bg-white shadow dark:border-gray-700 dark:bg-gray-800" data-aos="fade-up" data-aos-duration="1000">
         {% if certification.image %}

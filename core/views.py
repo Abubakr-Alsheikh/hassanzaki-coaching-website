@@ -13,13 +13,21 @@ from .forms import CertificationForm, CoachingRequestForm, PricingPlanForm
 
 logger = logging.getLogger(__name__)
 
+
 def index(request):
     plans = PricingPlan.objects.all()
     home_content = HomePageContent.objects.first()
-    certifications = Certification.objects.all() 
+    certifications = Certification.objects.all()
     return render(
-        request, "coaching/index.html", {"plans": plans, "home_content": home_content, 'certifications': certifications}
+        request,
+        "coaching/index.html",
+        {
+            "plans": plans,
+            "home_content": home_content,
+            "certifications": certifications,
+        },
     )
+
 
 def coaching_request_view(request, plan_id):
     try:
@@ -55,7 +63,9 @@ def coaching_request_view(request, plan_id):
 
             # 3. Save the datetime to the database in UTC
             coaching_request = form.save(commit=False)
-            coaching_request.scheduled_datetime = localized_datetime.astimezone(pytz.utc)  # Save in UTC
+            coaching_request.scheduled_datetime = localized_datetime.astimezone(
+                pytz.utc
+            )  # Save in UTC
             coaching_request.plan = plan
 
             # Check for double-booking before saving
@@ -64,8 +74,15 @@ def coaching_request_view(request, plan_id):
             ).exists()
 
             if is_double_booked:
-                messages.error(request, "لقد تم حجز هذه الفترة الزمنية بالفعل. يرجى اختيار وقت آخر.")
-                return render(request, "coaching/coaching_request_form.html", {"form": form, "plan": plan})
+                messages.error(
+                    request,
+                    "لقد تم حجز هذه الفترة الزمنية بالفعل. يرجى اختيار وقت آخر.",
+                )
+                return render(
+                    request,
+                    "coaching/coaching_request_form.html",
+                    {"form": form, "plan": plan},
+                )
 
             coaching_request.save()
 
@@ -83,14 +100,15 @@ def coaching_request_view(request, plan_id):
             html_message = render_to_string(
                 "coaching/emails/coaching_request_confirmation.html", context
             )
-            send_mail(
-                subject,
-                "",
-                settings.DEFAULT_FROM_EMAIL,
-                [user_email],
-                html_message=html_message,
-                fail_silently=False,
-            )
+            if user_email is not None:
+                send_mail(
+                    subject,
+                    "",
+                    settings.DEFAULT_FROM_EMAIL,
+                    [user_email],
+                    html_message=html_message,
+                    fail_silently=False,
+                )
 
             # Admin email context (in default/Egypt timezone)
             admin_email = settings.ADMIN_EMAIL
@@ -119,7 +137,7 @@ def coaching_request_view(request, plan_id):
 
             messages.success(
                 request,
-                "تم تقديم طلب الاستشارة التدريبية الخاص بك بنجاح، وسوف نتواصل معك قريباً لتأكيد الموعد!",
+                "تم تقديم طلبك بنجاح وسوف نتواصل معك من خلال وسائل التواصل التى ادخلتها.",
             )
             return redirect("coaching:index")
         else:
@@ -139,6 +157,7 @@ def coaching_request_view(request, plan_id):
     return render(
         request, "coaching/coaching_request_form.html", {"form": form, "plan": plan}
     )
+
 
 @login_required
 def dashboard(request):
@@ -285,6 +304,7 @@ def certification_list(request):
     context = {"certifications": certifications}
     return render(request, "coaching/dashboard/certification_list.html", context)
 
+
 @login_required
 def certification_create(request):
     if request.method == "POST":
@@ -294,7 +314,10 @@ def certification_create(request):
             return redirect("coaching:certification_list")
     else:
         form = CertificationForm()
-    return render(request, "coaching/dashboard/certification_create.html", {"form": form})
+    return render(
+        request, "coaching/dashboard/certification_create.html", {"form": form}
+    )
+
 
 @login_required
 def certification_edit(request, certification_id):
@@ -308,8 +331,11 @@ def certification_edit(request, certification_id):
     else:
         form = CertificationForm(instance=certification)
     return render(
-        request, "coaching/dashboard/certification_edit.html", {"form": form, "certification": certification}
+        request,
+        "coaching/dashboard/certification_edit.html",
+        {"form": form, "certification": certification},
     )
+
 
 @login_required
 def certification_delete(request, certification_id):
@@ -319,5 +345,7 @@ def certification_delete(request, certification_id):
         certification.delete()
         return redirect("coaching:certification_list")
     return render(
-        request, "coaching/dashboard/certification_delete_confirmation.html", {"certification": certification}
+        request,
+        "coaching/dashboard/certification_delete_confirmation.html",
+        {"certification": certification},
     )
