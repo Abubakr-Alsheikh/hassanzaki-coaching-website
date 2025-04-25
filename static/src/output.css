@@ -3193,6 +3193,10 @@ input:checked + .toggle-bg {
     gap: 4rem;
   }
 
+  .xl\:gap-5 {
+    gap: 1.25rem;
+  }
+
   .xl\:p-0 {
     padding: 0px;
   }
