@@ -8,10 +8,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <!-- Primary Meta Tags -->
-    <title>{% block title %}حسن زكي | مدرب تطوير الذات{% endblock title %}</title>
-    <meta name="title" content="{% block meta_title %}حسن زكي | مدرب تطوير الذات واكتشافها{% endblock meta_title %}" />
-    <meta name="description" content="{% block meta_description %}أنا حسن زكي، مدرب متخصص في اكتشاف وتطوير الذات وتحسين العلاقات. أساعدك لاكتشاف ذاتك، التغلب على مخاوفك، وتحقيق حياة ذات معنى. ابدأ رحلتك الآن!{% endblock meta_description %}" />
-    <meta name="keywords" content="{% block meta_keywords %}تطوير الذات، اكتشاف الذات، تحسين العلاقات، كوتشينج، إرشاد نفسي، حسن زكي، مدرب، أهداف، مخاوف، حياة ذات معنى، قرارات، شغف، علاقات, coach hassan zaki, coach, hassan, zaki{% endblock meta_keywords %}" />
+    <title>{% block title %}حسن زكي مدرب تطوير الذات وتحسين العلاقات{% endblock title %}</title>
+    <meta name="title" content="{% block meta_title %}حسن زكي مدرب تطوير الذات وتحسين العلاقات{% endblock meta_title %}" />
+    <meta name="description" content="{% block meta_description %}أنا حسن زكي، مدرب متخصص في اكتشاف وتطوير الذات وتحسين العلاقات. أساعدك لاكتشاف ذاتك، التغلب على مخاوفك، والوصول لافضل نسخه من نفسك. ابدأ رحلتك الآن!{% endblock meta_description %}" />
+    <meta name="keywords" content="{% block meta_keywords %}تطوير الذات، اكتشاف الذات، تحسين العلاقات، كوتشينج، إرشاد نفسي، حسن زكي، مدرب، أهداف، مخاوف، الوصول لافضل نسخه من نفسك، قرارات، شغف، علاقات, coach hassan zaki, coach, hassan, zaki{% endblock meta_keywords %}" />
     <meta name="author" content="Hassan Zaki" />
 
     <!-- Google tag (gtag.js) -->
@@ -74,30 +74,41 @@
       * {
         font-family: "Changa", serif;
         font-optical-sizing: auto;
-        font-weight: <weight>;
+        font-weight: <weight>; /* Note: "<weight>" is not a valid CSS value for font-weight. It might be a placeholder. Consider replacing it with a specific value like 'normal' or '400' if you encounter font weight issues. */
         font-style: normal;
       }
 
       html {
         scroll-behavior: smooth;
       }
+      
+      /* Updated styles for the floating WhatsApp button */
       .float {
         position: fixed;
-        width: 60px;
-        height: 60px;
         bottom: 40px;
         right: 40px;
         background-color: #25d366;
         color: #fff;
-        border-radius: 50px;
-        text-align: center;
-        font-size: 30px;
+        border-radius: 30px; /* Creates a pill shape */
         box-shadow: 2px 2px 3px #999;
         z-index: 100;
+        display: flex; /* Aligns icon and text horizontally */
+        align-items: center; /* Aligns icon and text vertically */
+        padding: 10px 20px; /* Adjust padding for overall size */
+        gap: 10px; /* Space between the icon and the text */
+        text-decoration: none; /* Removes underline from the link */
       }
 
-      .my-float {
-        margin-top: 16px;
+      .my-float-icon { /* Styles for the WhatsApp icon */
+        font-size: 28px; /* Icon size, adjust as needed */
+        display: flex; /* Ensures proper icon alignment */
+        align-items: center;
+      }
+
+      .my-float-text { /* Styles for the text "تواصل معي" */
+        font-size: 16px; /* Text size, adjust as needed */
+        font-weight: 500; /* Makes the text a bit bolder (medium weight) */
+        /* The "Changa" font will be inherited from the global '*' style */
       }
     </style>
     <!-- Canonical URL -->
@@ -124,9 +135,13 @@
     {% include "coaching/nav.html" %}
     <div class="container mx-auto mt-4 overflow-hidden">{% block content %} {% endblock content %}</div>
     {% include "coaching/footer.html" %}
+    
+    <!-- Modified WhatsApp button with text -->
     <a href="https://api.whatsapp.com/send?phone=2001007483683" class="float" target="_blank">
-      <i class="fab fa-whatsapp my-float"></i>
+      <i class="fab fa-whatsapp my-float-icon"></i>
+      <span class="my-float-text" lang="ar">تواصل معي</span>
     </a>
+    
     <script src="https://cdn.jsdelivr.net/npm/flowbite@2.5.2/dist/flowbite.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowbite.min.js"></script>
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
